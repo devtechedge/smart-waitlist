@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TierBadge } from "@/components/waitlist/tier-badge";
 
 /**
  * PositionCard
@@ -32,6 +33,7 @@ export type PositionCardProps = {
   referralCount: number;
   joinedAt: Date | string;
   status: "pending" | "invited" | "activated";
+  tier: "free" | "pro" | "founder";
   className?: string;
 };
 
@@ -41,6 +43,7 @@ export function PositionCard({
   referralCount,
   joinedAt,
   status,
+  tier,
   className,
 }: PositionCardProps) {
   const percentile =
@@ -61,7 +64,10 @@ export function PositionCard({
             </span>
           </CardTitle>
         </div>
-        <StatusBadge status={status} />
+        <div className="flex flex-col items-end gap-1.5">
+          <TierBadge tier={tier} />
+          <StatusBadge status={status} />
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">

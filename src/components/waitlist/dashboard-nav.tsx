@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/waitlist/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 /**
  * DashboardNav
@@ -78,6 +79,7 @@ export function DashboardNav({
             </span>
           ) : null}
 
+          <ThemeToggle />
           <SignOutButton iconOnly label="Sign out" />
         </nav>
       </div>

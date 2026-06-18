@@ -220,6 +220,35 @@ export async function claimOrCreateWaitlistEntryAction(): Promise<
     };
   }
 
+  // Fire-and-forget: send referral notification email to the referrer.
+  // Gracefully no-ops if RESEND_API_KEY is not set.
+  if (referrerRewarded && safeReferrer) {
+    void (async () => {
+      try {
+        const [referrer] = await db
+          .select({
+            email: schema.waitlistEntries.email,
+            fullName: schema.waitlistEntries.fullName,
+            referralCount: schema.waitlistEntries.referralCount,
+          })
+          .from(schema.waitlistEntries)
+          .where(eq(schema.waitlistEntries.id, safeReferrer.referrerEntryId))
+          .limit(1);
+
+        if (referrer) {
+          await maybeSendReferralEmail({
+            referrerEmail: referrer.email,
+            referrerName: referrer.fullName,
+            newUserName: user.fullName,
+            referralCount: referrer.referralCount,
+          });
+        }
+      } catch (err) {
+        console.error("[claimOrCreateWaitlistEntryAction] email send failed", err);
+      }
+    })();
+  }
+
   // Re-fetch the inserted row so we have the canonical `id`, `createdAt`, etc.
   const [inserted] = await db
     .select()
@@ -346,4 +375,167 @@ export async function getOrClaimMyWaitlistEntryAction(): Promise<
   ClaimedWaitlist | ClaimFailed
 > {
   return claimOrCreateWaitlistEntryAction();
+}
+
+// ============================================================================
+// Custom referral code
+// ============================================================================
+
+const customRefCodeSchema = z
+  .string()
+  .min(3, "Code must be at least 3 characters")
+  .max(20, "Code must be at most 20 characters")
+  .regex(/^[a-z0-9-]+$/i, "Code can only contain letters, numbers, and hyphens")
+  .transform((s) => s.trim().toLowerCase());
+
+/** Reserved codes users can't claim (system/brand words). */
+const RESERVED_CODES = new Set([
+  "admin", "api", "auth", "dashboard", "login", "signin", "signup",
+  "about", "help", "support", "settings", "account", "profile",
+  "waitlist", "referral", "refer", "invite", "system", "test", "null",
+  "undefined", "true", "false", "www", "app", "mail", "ftp",
+]);
+
+export type UpdateReferralCodeState = {
+  ok: boolean;
+  error?: string;
+  newCode?: string;
+};
+
+/**
+ * Let a user customize their referral code (e.g. "ada-lovelace" instead of
+ * the auto-generated "k3f9a2"). Validates uniqueness, length, charset, and
+ * reserved words.
+ */
+export async function updateReferralCodeAction(
+  input: string,
+): Promise<UpdateReferralCodeState> {
+  const parsed = customRefCodeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid code" };
+  }
+
+  const newCode = parsed.data;
+
+  if (RESERVED_CODES.has(newCode)) {
+    return { ok: false, error: "That code is reserved — please pick another." };
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return { ok: false, error: "You must be signed in." };
+  }
+
+  // Find the user's entry.
+  const [entry] = await db
+    .select({ id: schema.waitlistEntries.id })
+    .from(schema.waitlistEntries)
+    .where(eq(schema.waitlistEntries.email, user.email))
+    .limit(1);
+
+  if (!entry) {
+    return { ok: false, error: "Waitlist entry not found." };
+  }
+
+  // Check uniqueness (excluding self).
+  const [conflict] = await db
+    .select({ id: schema.waitlistEntries.id })
+    .from(schema.waitlistEntries)
+    .where(eq(schema.waitlistEntries.referralCode, newCode))
+    .limit(1);
+
+  if (conflict && conflict.id !== entry.id) {
+    return { ok: false, error: "That code is already taken — try another." };
+  }
+
+  // Update the code.
+  await db
+    .update(schema.waitlistEntries)
+    .set({
+      referralCode: newCode,
+      hasCustomCode: true,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.waitlistEntries.id, entry.id));
+
+  return { ok: true, newCode };
+}
+
+// ============================================================================
+// Tier upgrade
+// ============================================================================
+
+export type TierUpgradeState = {
+  ok: boolean;
+  error?: string;
+  newTier?: "free" | "pro" | "founder";
+};
+
+const validTiers = new Set(["free", "pro", "founder"]);
+
+/**
+ * Upgrade the current user's tier. In production this would be called AFTER
+ * a successful Stripe checkout webhook. For the portfolio demo, we expose it
+ * directly so you can test the tier-based queue priority.
+ *
+ * To wire real payments:
+ *   1. Create a Stripe Checkout session in a Route Handler.
+ *   2. On `checkout.session.completed` webhook, call this action with the
+ *      customer's email + the purchased tier.
+ */
+export async function upgradeTierAction(
+  tier: "pro" | "founder",
+): Promise<TierUpgradeState> {
+  if (!validTiers.has(tier)) {
+    return { ok: false, error: "Invalid tier." };
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return { ok: false, error: "You must be signed in." };
+  }
+
+  const [entry] = await db
+    .select({
+      id: schema.waitlistEntries.id,
+      tier: schema.waitlistEntries.tier,
+    })
+    .from(schema.waitlistEntries)
+    .where(eq(schema.waitlistEntries.email, user.email))
+    .limit(1);
+
+  if (!entry) {
+    return { ok: false, error: "Waitlist entry not found." };
+  }
+
+  // Prevent downgrades via this action (use admin panel for that).
+  const priority = { free: 1, pro: 2, founder: 3 } as const;
+  if (priority[entry.tier] > priority[tier]) {
+    return { ok: false, error: "You're already on a higher tier." };
+  }
+
+  await db
+    .update(schema.waitlistEntries)
+    .set({
+      tier,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.waitlistEntries.id, entry.id));
+
+  return { ok: true, newTier: tier };
+}
+
+/**
+ * Send a referral notification email to the referrer. Called internally by
+ * `claimOrCreateWaitlistEntryAction` when a referral is rewarded. Gracefully
+ * no-ops if `RESEND_API_KEY` is not set (so the app works without email).
+ */
+async function maybeSendReferralEmail(params: {
+  referrerEmail: string;
+  referrerName: string | null;
+  newUserName: string | null;
+  referralCount: number;
+}): Promise<void> {
+  const { sendReferralNotification } = await import("@/lib/email");
+  await sendReferralNotification(params);
 }

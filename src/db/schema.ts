@@ -45,6 +45,18 @@ export const waitlistStatus = pgEnum("waitlist_status", [
 ]);
 
 /**
+ * Early access tier:
+ *   free     : default, standard waitlist position
+ *   pro      : paid tier — priority position boost (moves ahead of free users)
+ *   founder  : top tier — highest priority, lifetime access
+ *
+ * The tier affects position ranking:
+ *   ORDER BY tier_priority DESC, referral_count DESC, created_at ASC
+ * where tier_priority = founder=3, pro=2, free=1.
+ */
+export const waitlistTier = pgEnum("waitlist_tier", ["free", "pro", "founder"]);
+
+/**
  * `profiles`
  * ----------
  * One row per Supabase Auth user. Created by a DB trigger on `auth.users`
@@ -122,6 +134,12 @@ export const waitlistEntries = pgTable(
 
     status: waitlistStatus("status").notNull().default("pending"),
 
+    /** Early access tier — affects position ranking (pro/founder get priority). */
+    tier: waitlistTier("tier").notNull().default("free"),
+
+    /** Whether the user has customized their referral code (vs auto-generated). */
+    hasCustomCode: boolean("has_custom_code").notNull().default(false),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -133,12 +151,14 @@ export const waitlistEntries = pgTable(
     index("waitlist_entries_user_id_idx").on(table.userId),
     index("waitlist_entries_referred_by_idx").on(table.referredByEntryId),
     // Composite index optimizes the position-ranking query:
-    //   ORDER BY referral_count DESC, created_at ASC
+    //   ORDER BY tier_priority DESC, referral_count DESC, created_at ASC
     index("waitlist_entries_ranking_idx").on(
+      table.tier,
       table.referralCount,
       table.createdAt,
     ),
     uniqueIndex("waitlist_entries_referral_code_idx").on(table.referralCode),
+    index("waitlist_entries_tier_idx").on(table.tier),
   ],
 );
 
@@ -184,3 +204,4 @@ export type WaitlistEntry = InferSelectModel<typeof waitlistEntries>;
 export type NewWaitlistEntry = InferInsertModel<typeof waitlistEntries>;
 
 export type WaitlistStatus = (typeof waitlistStatus.enumValues)[number];
+export type WaitlistTier = (typeof waitlistTier.enumValues)[number];

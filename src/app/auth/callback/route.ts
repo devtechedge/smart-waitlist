@@ -70,6 +70,24 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  // ── Referral attribution for OAuth signups ──────────────────────────────
+  // If the OAuth flow included a `ref` param (set by GitHubOAuthButton), we
+  // stamp it onto the user's metadata so `claimOrCreateWaitlistEntryAction`
+  // can read it on the next dashboard visit and attribute the referral.
+  const refCode = requestUrl.searchParams.get("ref");
+  if (refCode) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      // Only set if not already present (don't overwrite).
+      const existing = user.user_metadata?.ref_code;
+      if (!existing) {
+        await supabase.auth.updateUser({
+          data: { ref_code: refCode },
+        });
+      }
+    }
+  }
+
   // Success — redirect to the dashboard (or `next`).
   const redirectUrl = new URL(next, requestUrl.origin);
   return NextResponse.redirect(redirectUrl);

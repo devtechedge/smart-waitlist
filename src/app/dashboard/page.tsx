@@ -6,6 +6,8 @@ import { DashboardNav } from "@/components/waitlist/dashboard-nav";
 import { PositionCard } from "@/components/waitlist/position-card";
 import { ReferralShareBox } from "@/components/waitlist/referral-share-box";
 import { Leaderboard } from "@/components/waitlist/leaderboard";
+import { CustomReferralCodeEditor } from "@/components/waitlist/custom-referral-code-editor";
+import { TierUpgradeCard } from "@/components/waitlist/tier-upgrade-card";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -103,6 +105,7 @@ export default async function DashboardPage() {
             referralCount={entry.referralCount}
             joinedAt={entry.createdAt}
             status={entry.status}
+            tier={entry.tier}
             className="lg:col-span-3"
           />
 
@@ -148,6 +151,16 @@ export default async function DashboardPage() {
 
         {/* Leaderboard */}
         <Leaderboard entries={leaderboard} className="mt-6" />
+
+        {/* Custom referral code editor */}
+        <CustomReferralCodeEditor
+          currentCode={entry.referralCode}
+          hasCustomCode={entry.hasCustomCode}
+          className="mt-6"
+        />
+
+        {/* Tier upgrade card */}
+        <TierUpgradeCard currentTier={entry.tier} className="mt-6" />
       </main>
     </>
   );

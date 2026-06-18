@@ -30,6 +30,12 @@
   --input: 240 5.9% 90%;
   --ring: 240 5.9% 10%;
   --radius: 0.5rem;
+  /* Chart palette (5 distinct colors) */
+  --chart-1: 221 83% 53%;    /* blue */
+  --chart-2: 142 71% 45%;    /* green */
+  --chart-3: 38 92% 50%;     /* amber */
+  --chart-4: 280 65% 60%;    /* purple */
+  --chart-5: 0 84% 60%;      /* red */
 }
 
 .dark {
@@ -52,6 +58,12 @@
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
+  /* Chart palette (dark mode — slightly brighter) */
+  --chart-1: 217 91% 60%;
+  --chart-2: 142 71% 45%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 280 65% 65%;
+  --chart-5: 0 72% 65%;
 }
 
 @theme inline {

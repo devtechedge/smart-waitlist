@@ -6,6 +6,7 @@ import { DashboardNav } from "@/components/waitlist/dashboard-nav";
 import { StatsCards } from "@/components/admin/stats-cards";
 import { WaitlistTable } from "@/components/admin/waitlist-table";
 import { CsvExportButton } from "@/components/admin/csv-export-button";
+import { AnalyticsCharts } from "@/components/admin/analytics-charts";
 import {
   Card,
   CardContent,
@@ -13,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAdminStats, getAdminEntries, AdminAuthError } from "@/lib/queries/admin";
+import { getAdminStats, getAdminEntries, getAdminAnalytics, AdminAuthError } from "@/lib/queries/admin";
 import { getCurrentUser } from "@/lib/queries/waitlist";
 import { isAdminEmail } from "@/lib/server-env";
 
@@ -67,18 +68,17 @@ export default async function AdminPage() {
   // 3. Fetch stats + entries. Both are admin-gated server-side too.
   let stats;
   let entries;
+  let analytics;
   try {
-    [stats, entries] = await Promise.all([
+    [stats, entries, analytics] = await Promise.all([
       getAdminStats(),
       getAdminEntries(1000, 0),
+      getAdminAnalytics().catch(() => null), // non-fatal — charts just won't render
     ]);
   } catch (err) {
     if (err instanceof AdminAuthError) {
-      // Race condition: user was removed from the allow-list between the
-      // check above and the query. Treat as forbidden.
       redirect("/?redirect=/admin");
     }
-    // Other errors (DB down, etc.) bubble up to error.tsx.
     throw err;
   }
 
@@ -108,6 +108,11 @@ export default async function AdminPage() {
 
         {/* Stats grid */}
         <StatsCards stats={stats} className="mb-8" />
+
+        {/* Analytics charts */}
+        {analytics ? (
+          <AnalyticsCharts data={analytics} className="mb-8" />
+        ) : null}
 
         {/* Full table */}
         <WaitlistTable entries={entries} />
