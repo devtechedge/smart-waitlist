@@ -234,6 +234,18 @@ export async function claimOrCreateWaitlistEntryAction(): Promise<
     };
   }
 
+  // v5: Fire webhook for new signup (Slack/Discord notification)
+  try {
+    const { fireWebhooks } = await import("@/lib/webhooks");
+    fireWebhooks("signup", {
+      title: "🎉 New waitlist signup!",
+      message: `${inserted.fullName ?? inserted.email} just joined the waitlist${safeReferrer ? " via referral" : ""}!`,
+      color: "#6366f1",
+    });
+  } catch {
+    // webhooks are best-effort
+  }
+
   return finalize(inserted, true, referrerRewarded);
 }
 

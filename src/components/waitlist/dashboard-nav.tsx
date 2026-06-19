@@ -4,6 +4,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/waitlist/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/lib/i18n";
 
 /**
  * DashboardNav
@@ -78,6 +80,8 @@ export function DashboardNav({
             </span>
           ) : null}
 
+          <ThemeToggle />
+          <LanguageSwitcher />
           <SignOutButton iconOnly label="Sign out" />
         </nav>
       </div>

@@ -6,6 +6,12 @@ import { DashboardNav } from "@/components/waitlist/dashboard-nav";
 import { PositionCard } from "@/components/waitlist/position-card";
 import { ReferralShareBox } from "@/components/waitlist/referral-share-box";
 import { Leaderboard } from "@/components/waitlist/leaderboard";
+import { CustomReferralCodeEditor } from "@/components/waitlist/custom-referral-code-editor";
+import { TierUpgradeCard } from "@/components/waitlist/tier-upgrade-card";
+import { MilestoneRewards } from "@/components/waitlist/milestone-rewards";
+import { ReferralChain } from "@/components/waitlist/referral-chain";
+import { PositionHistoryChart } from "@/components/waitlist/position-history-chart";
+import { PromoCodeRedeemer } from "@/components/waitlist/promo-code-redeemer";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +23,13 @@ import {
 import { getOrClaimMyWaitlistEntryAction } from "@/app/actions/waitlist";
 import { getCurrentUser } from "@/lib/queries/waitlist";
 import { isAdminEmail } from "@/lib/server-env";
+import {
+  getMilestonesForUser,
+  getReferralChain,
+  getPositionHistory,
+  checkAndUnlockMilestones,
+} from "@/lib/queries/v5-features";
+import { fireWebhooks } from "@/lib/webhooks";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -74,6 +87,23 @@ export default async function DashboardPage() {
   const { getDashboardData } = await import("@/lib/queries/waitlist");
   const dashboardData = await getDashboardData();
   const leaderboard = dashboardData?.leaderboard ?? [];
+
+  // v5 features: fetch milestones, referral chain, position history
+  const [milestones, referralChain, positionHistory] = await Promise.all([
+    getMilestonesForUser(entry.id, entry.referralCount).catch(() => []),
+    getReferralChain(entry.id).catch(() => null),
+    getPositionHistory(entry.id).catch(() => []),
+  ]);
+
+  // Check for newly unlocked milestones + fire webhook
+  const newMilestones = await checkAndUnlockMilestones(entry.id).catch(() => []);
+  if (newMilestones.length > 0) {
+    fireWebhooks("milestone", {
+      title: "🏆 Milestone Unlocked!",
+      message: `${user.fullName ?? user.email} just unlocked "${newMilestones[0]?.title}" with ${entry.referralCount} referrals!`,
+      color: "#f59e0b",
+    });
+  }
 
   return (
     <>
@@ -148,6 +178,32 @@ export default async function DashboardPage() {
 
         {/* Leaderboard */}
         <Leaderboard entries={leaderboard} className="mt-6" />
+
+        {/* v5: Position history chart + Promo code redeemer */}
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <PositionHistoryChart data={positionHistory} className="lg:col-span-2" />
+          <PromoCodeRedeemer />
+        </div>
+
+        {/* v5: Milestone rewards */}
+        <MilestoneRewards
+          milestones={milestones}
+          currentReferralCount={entry.referralCount}
+          className="mt-6"
+        />
+
+        {/* v5: Referral chain visualization */}
+        <ReferralChain root={referralChain} className="mt-6" />
+
+        {/* Custom referral code editor */}
+        <CustomReferralCodeEditor
+          currentCode={entry.referralCode}
+          hasCustomCode={entry.hasCustomCode}
+          className="mt-6"
+        />
+
+        {/* Tier upgrade card */}
+        <TierUpgradeCard currentTier={entry.tier} className="mt-6" />
       </main>
     </>
   );

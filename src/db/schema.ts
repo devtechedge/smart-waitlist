@@ -8,6 +8,7 @@ import {
   pgEnum,
   index,
   uniqueIndex,
+  doublePrecision,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { relations, type InferSelectModel, type InferInsertModel } from "drizzle-orm";
@@ -156,6 +157,12 @@ export const waitlistEntries = pgTable(
     /** Stripe subscription ID (for recurring Pro tier). */
     stripeSubscriptionId: text("stripe_subscription_id"),
 
+    // ── Geography (Feature 4: Heatmap) ───────────────────────────────────
+    signupCountry: text("country"),
+    signupCity: text("city"),
+    latitude: doublePrecision("latitude"),
+    longitude: doublePrecision("longitude"),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -251,6 +258,96 @@ export const waitlistEntriesRelations = relations(waitlistEntries, ({ one, many 
   }),
 }));
 
+// ============================================================================
+// v5 Tables — 10 Complex Features
+// ============================================================================
+
+/** Position history — tracks position changes over time for charting. */
+export const positionHistory = pgTable(
+  "position_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    entryId: uuid("entry_id").notNull().references(() => waitlistEntries.id, { onDelete: "cascade" }),
+    position: integer("position").notNull(),
+    referralCount: integer("referral_count").notNull(),
+    tier: waitlistTier("tier").notNull().default("free"),
+    recordedAt: timestamp("recorded_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("position_history_entry_id_idx").on(table.entryId),
+    index("position_history_recorded_at_idx").on(table.recordedAt),
+  ],
+);
+
+/** Milestone definitions — e.g. "First Referral", "Connector", "Legend". */
+export const milestones = pgTable(
+  "milestones",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    threshold: integer("threshold").notNull().unique(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    perk: text("perk").notNull(),
+    badgeIcon: text("badge_icon"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
+/** Tracks which milestones each user has unlocked. */
+export const userMilestones = pgTable(
+  "user_milestones",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    entryId: uuid("entry_id").notNull().references(() => waitlistEntries.id, { onDelete: "cascade" }),
+    milestoneId: uuid("milestone_id").notNull().references(() => milestones.id, { onDelete: "cascade" }),
+    unlockedAt: timestamp("unlocked_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("user_milestones_entry_id_idx").on(table.entryId),
+  ],
+);
+
+/** VIP promo codes — give instant tier upgrades. */
+export const promoCodes = pgTable(
+  "promo_codes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    code: text("code").notNull().unique(),
+    tier: waitlistTier("tier").notNull().default("pro"),
+    maxUses: integer("max_uses"),
+    usesCount: integer("uses_count").notNull().default(0),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdBy: text("created_by").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    note: text("note"),
+  },
+);
+
+/** Webhook integrations (Slack/Discord). */
+export const webhookConfigs = pgTable(
+  "webhook_configs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    platform: text("platform").notNull().default("slack"),
+    events: text("events").array().notNull().default([]),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
+/** App settings — single-row table for launch date, mode, etc. */
+export const appSettings = pgTable(
+  "app_settings",
+  {
+    id: integer("id").primaryKey().default(1),
+    launchDate: timestamp("launch_date", { withTimezone: true }),
+    launchMode: text("launch_mode").notNull().default("waitlist"),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
 /**
  * Convenience type aliases — used by Server Actions and Server Components
  * for full type inference from the DB schema all the way to the UI.
@@ -266,3 +363,10 @@ export type WaitlistTier = (typeof waitlistTier.enumValues)[number];
 
 export type AdminAuditLog = InferSelectModel<typeof adminAuditLog>;
 export type NewAdminAuditLog = InferInsertModel<typeof adminAuditLog>;
+
+export type PositionHistory = InferSelectModel<typeof positionHistory>;
+export type Milestone = InferSelectModel<typeof milestones>;
+export type UserMilestone = InferSelectModel<typeof userMilestones>;
+export type PromoCode = InferSelectModel<typeof promoCodes>;
+export type WebhookConfig = InferSelectModel<typeof webhookConfigs>;
+export type AppSettings = InferSelectModel<typeof appSettings>;

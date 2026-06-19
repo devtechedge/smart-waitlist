@@ -6,6 +6,9 @@ import { DashboardNav } from "@/components/waitlist/dashboard-nav";
 import { StatsCards } from "@/components/admin/stats-cards";
 import { WaitlistTable } from "@/components/admin/waitlist-table";
 import { CsvExportButton } from "@/components/admin/csv-export-button";
+import { GeoHeatmap } from "@/components/admin/geo-heatmap";
+import { ConversionFunnel } from "@/components/admin/conversion-funnel";
+import { getFunnelData, getGeoSignupData } from "@/lib/queries/v5-features";
 import {
   Card,
   CardContent,
@@ -64,21 +67,22 @@ export default async function AdminPage() {
     );
   }
 
-  // 3. Fetch stats + entries. Both are admin-gated server-side too.
+  // 3. Fetch stats + entries + v5 analytics. All admin-gated.
   let stats;
   let entries;
+  let funnelData;
+  let geoData;
   try {
-    [stats, entries] = await Promise.all([
+    [stats, entries, funnelData, geoData] = await Promise.all([
       getAdminStats(),
       getAdminEntries(1000, 0),
+      getFunnelData().catch(() => null),
+      getGeoSignupData().catch(() => []),
     ]);
   } catch (err) {
     if (err instanceof AdminAuthError) {
-      // Race condition: user was removed from the allow-list between the
-      // check above and the query. Treat as forbidden.
       redirect("/?redirect=/admin");
     }
-    // Other errors (DB down, etc.) bubble up to error.tsx.
     throw err;
   }
 
@@ -108,6 +112,14 @@ export default async function AdminPage() {
 
         {/* Stats grid */}
         <StatsCards stats={stats} className="mb-8" />
+
+        {/* v5: Conversion funnel + Geo heatmap */}
+        {funnelData && (
+          <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <ConversionFunnel data={funnelData} />
+            <GeoHeatmap data={geoData} />
+          </div>
+        )}
 
         {/* Full table */}
         <WaitlistTable entries={entries} />
