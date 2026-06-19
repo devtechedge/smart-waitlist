@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TierBadge } from "@/components/waitlist/tier-badge";
 
 /**
  * Leaderboard
@@ -30,7 +29,6 @@ export type LeaderboardEntry = {
   referralCount: number;
   fullName: string | null;
   isMe: boolean;
-  tier: "free" | "pro" | "founder";
 };
 
 export type LeaderboardProps = {
@@ -93,12 +91,9 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
         {rankIcon ?? <span>{formatPosition(entry.position)}</span>}
       </div>
 
-      {/* Name + tier badge */}
+      {/* Name */}
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <span className="truncate text-sm font-medium">{displayName}</span>
-        {entry.tier !== "free" ? (
-          <TierBadge tier={entry.tier} iconOnly className="shrink-0" />
-        ) : null}
         {entry.isMe ? (
           <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
             You

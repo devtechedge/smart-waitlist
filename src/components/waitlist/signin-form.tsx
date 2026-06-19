@@ -19,7 +19,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { GitHubOAuthButton } from "@/components/waitlist/github-oauth-button";
 import { signInAction, type ActionState } from "@/app/actions/auth";
 
 /**
@@ -117,12 +116,6 @@ export function SignInForm({
             <span className="text-xs text-muted-foreground">or</span>
             <Separator className="flex-1" />
           </div>
-
-          <GitHubOAuthButton
-            redirectPath={redirectPath}
-            label="signin"
-            className="w-full"
-          />
 
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}

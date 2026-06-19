@@ -19,7 +19,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { GitHubOAuthButton } from "@/components/waitlist/github-oauth-button";
 import { signUpAction, type ActionState } from "@/app/actions/auth";
 
 /**
@@ -183,13 +182,6 @@ export function SignupForm({
             <span className="text-xs text-muted-foreground">or</span>
             <Separator className="flex-1" />
           </div>
-
-          <GitHubOAuthButton
-            refCode={defaultRefCode || undefined}
-            redirectPath={redirectPath}
-            label="signup"
-            className="w-full"
-          />
 
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}

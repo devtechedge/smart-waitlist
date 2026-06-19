@@ -107,6 +107,8 @@ export type {
   NewWaitlistEntry,
   WaitlistStatus,
   WaitlistTier,
+  AdminAuditLog,
+  NewAdminAuditLog,
 } from "./schema";
 
 /** The Drizzle DB type — useful for typing function parameters. */

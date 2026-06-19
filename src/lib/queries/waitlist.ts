@@ -46,53 +46,20 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 }
 
 /**
- * Tier priority mapping — higher = better (ahead in queue).
- * Used for position ranking: founder > pro > free.
- */
-const TIER_PRIORITY: Record<string, number> = {
-  founder: 3,
-  pro: 2,
-  free: 1,
-};
-
-/**
  * Compute a user's waitlist position based on the ranking rule.
- *
- * Ranking (highest priority first):
- *   1. tier_priority DESC  (founder=3 > pro=2 > free=1)
- *   2. referral_count DESC
- *   3. created_at ASC (earlier signup wins ties)
- *
- * Position = 1 + COUNT(users ranked strictly ahead of me).
+ * Returns `null` if the user has no entry yet.
  */
 export async function computePosition(
-  entry: Pick<WaitlistEntry, "referralCount" | "createdAt" | "tier">,
+  entry: Pick<WaitlistEntry, "referralCount" | "createdAt">,
 ): Promise<number> {
-  const myPriority = TIER_PRIORITY[entry.tier] ?? 1;
-
-  // A user is "ahead" of me if:
-  //   - their tier_priority > mine, OR
-  //   - same tier AND more referrals, OR
-  //   - same tier AND same referrals AND earlier created_at
+  // `or()` returns `SQL | undefined`; both branches here are non-null, so we
+  // assert to `SQL` for ergonomics. The `.where()` call below accepts
+  // `SQL | undefined`, so the assertion is purely for type-narrowing clarity.
   const aheadCondition = or(
-    sql`case ${schema.waitlistEntries.tier}
-          when 'founder' then 3
-          when 'pro' then 2
-          else 1
-        end > ${myPriority}`,
+    gt(schema.waitlistEntries.referralCount, entry.referralCount),
     and(
-      sql`case ${schema.waitlistEntries.tier}
-            when 'founder' then 3
-            when 'pro' then 2
-            else 1
-          end = ${myPriority}`,
-      or(
-        gt(schema.waitlistEntries.referralCount, entry.referralCount),
-        and(
-          eq(schema.waitlistEntries.referralCount, entry.referralCount),
-          lt(schema.waitlistEntries.createdAt, entry.createdAt),
-        ),
-      ),
+      eq(schema.waitlistEntries.referralCount, entry.referralCount),
+      lt(schema.waitlistEntries.createdAt, entry.createdAt),
     ),
   ) as SQL;
 
@@ -103,6 +70,7 @@ export async function computePosition(
     .from(schema.waitlistEntries)
     .where(aheadCondition);
 
+  // `ahead` is the number of users strictly ahead; our position = ahead + 1.
   return (result?.ahead ?? 0) + 1;
 }
 
@@ -126,7 +94,6 @@ export type DashboardData = {
     referralCount: number;
     fullName: string | null;
     isMe: boolean;
-    tier: "free" | "pro" | "founder";
   }>;
 };
 
@@ -154,18 +121,15 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     getTotalWaitlistCount(),
   ]);
 
-  // Top 10 leaderboard — same ranking rule (tier priority, then referrals, then created_at).
+  // Top 10 leaderboard — same ranking rule.
   const leaderboardRows = await db
     .select({
       referralCount: schema.waitlistEntries.referralCount,
       fullName: schema.waitlistEntries.fullName,
       email: schema.waitlistEntries.email,
-      tier: schema.waitlistEntries.tier,
     })
     .from(schema.waitlistEntries)
     .orderBy(
-      // tier priority: founder > pro > free
-      sql`case ${schema.waitlistEntries.tier} when 'founder' then 3 when 'pro' then 2 else 1 end desc`,
       desc(schema.waitlistEntries.referralCount),
       schema.waitlistEntries.createdAt,
     )
@@ -177,7 +141,6 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     referralCount: row.referralCount,
     fullName: row.fullName ?? maskForLeaderboard(row.email),
     isMe: row.email === user.email,
-    tier: row.tier,
   }));
 
   return {

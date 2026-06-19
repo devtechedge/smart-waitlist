@@ -45,14 +45,8 @@ export const waitlistStatus = pgEnum("waitlist_status", [
 ]);
 
 /**
- * Early access tier:
- *   free     : default, standard waitlist position
- *   pro      : paid tier — priority position boost (moves ahead of free users)
- *   founder  : top tier — highest priority, lifetime access
- *
- * The tier affects position ranking:
- *   ORDER BY tier_priority DESC, referral_count DESC, created_at ASC
- * where tier_priority = founder=3, pro=2, free=1.
+ * Early access tier: free → pro → founder.
+ * Affects position ranking: founder > pro > free.
  */
 export const waitlistTier = pgEnum("waitlist_tier", ["free", "pro", "founder"]);
 
@@ -140,6 +134,28 @@ export const waitlistEntries = pgTable(
     /** Whether the user has customized their referral code (vs auto-generated). */
     hasCustomCode: boolean("has_custom_code").notNull().default(false),
 
+    // ── Anti-Fraud fields (Feature 4) ────────────────────────────────────
+    /** IP address at signup — used for multi-account detection. */
+    signupIp: text("signup_ip"),
+    /** Browser fingerprint hash — detects same-device multi-accounting. */
+    fingerprint: text("fingerprint"),
+    /** Fraud risk score 0-100 (0 = clean, 100 = definitely fraudulent). */
+    fraudScore: integer("fraud_score").notNull().default(0),
+    /** Whether the entry is flagged for admin review. */
+    flagged: boolean("flagged").notNull().default(false),
+
+    // ── Admin fields (Feature 3) ─────────────────────────────────────────
+    /** Soft-ban: user can't sign in or access dashboard while banned. */
+    banned: boolean("banned").notNull().default(false),
+    /** Reason for ban (if any). */
+    banReason: text("ban_reason"),
+
+    // ── Stripe fields (Feature 1) ────────────────────────────────────────
+    /** Stripe customer ID — set after first payment. */
+    stripeCustomerId: text("stripe_customer_id"),
+    /** Stripe subscription ID (for recurring Pro tier). */
+    stripeSubscriptionId: text("stripe_subscription_id"),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -159,6 +175,48 @@ export const waitlistEntries = pgTable(
     ),
     uniqueIndex("waitlist_entries_referral_code_idx").on(table.referralCode),
     index("waitlist_entries_tier_idx").on(table.tier),
+    // Anti-fraud indexes
+    index("waitlist_entries_signup_ip_idx").on(table.signupIp),
+    index("waitlist_entries_fingerprint_idx").on(table.fingerprint),
+    index("waitlist_entries_flagged_idx").on(table.flagged),
+    index("waitlist_entries_banned_idx").on(table.banned),
+    // Stripe indexes
+    index("waitlist_entries_stripe_customer_idx").on(table.stripeCustomerId),
+  ],
+);
+
+/**
+ * `admin_audit_log`
+ * -----------------
+ * Records every admin action (ban, unban, tier change, delete, invite) for
+ * compliance and accountability. Append-only — never updated or deleted.
+ */
+export const adminAuditLog = pgTable(
+  "admin_audit_log",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    /** The admin who performed the action. */
+    adminEmail: text("admin_email").notNull(),
+    /** The action performed. */
+    action: text("action").notNull(),
+    /** The target entry's ID (if applicable). */
+    targetEntryId: uuid("target_entry_id"),
+    /** The target entry's email (denormalized for readability). */
+    targetEmail: text("target_email"),
+    /** Old value (e.g. old tier) — for diff display. */
+    oldValue: text("old_value"),
+    /** New value (e.g. new tier). */
+    newValue: text("new_value"),
+    /** Optional note from the admin. */
+    note: text("note"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("admin_audit_log_admin_email_idx").on(table.adminEmail),
+    index("admin_audit_log_target_entry_idx").on(table.targetEntryId),
+    index("admin_audit_log_created_at_idx").on(table.createdAt),
   ],
 );
 
@@ -205,3 +263,6 @@ export type NewWaitlistEntry = InferInsertModel<typeof waitlistEntries>;
 
 export type WaitlistStatus = (typeof waitlistStatus.enumValues)[number];
 export type WaitlistTier = (typeof waitlistTier.enumValues)[number];
+
+export type AdminAuditLog = InferSelectModel<typeof adminAuditLog>;
+export type NewAdminAuditLog = InferInsertModel<typeof adminAuditLog>;

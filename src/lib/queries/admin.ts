@@ -152,55 +152,36 @@ export async function getAdminEntries(
 }
 
 // ============================================================================
-// Analytics queries (for charts)
+// Analytics queries
 // ============================================================================
 
-/** Daily signup counts for the last N days (for line/area chart). */
 export type DailySignupPoint = {
-  date: string;       // YYYY-MM-DD
+  date: string;
   signups: number;
-  referrals: number;  // signups that came via a referral
+  referrals: number;
 };
 
-/** Tier distribution (for pie/donut chart). */
 export type TierDistribution = {
   tier: "free" | "pro" | "founder";
   count: number;
 };
 
-/** Status distribution (for pie/donut chart). */
-export type StatusDistribution = {
-  status: "pending" | "invited" | "activated";
-  count: number;
-};
-
-/** Top referrers (for bar chart). */
 export type TopReferrer = {
   fullName: string | null;
   email: string;
   referralCount: number;
 };
 
-/** Aggregate analytics payload for the admin charts. */
 export type AdminAnalytics = {
   dailySignups: DailySignupPoint[];
   tierDistribution: TierDistribution[];
-  statusDistribution: StatusDistribution[];
   topReferrers: TopReferrer[];
 };
 
-/**
- * Fetch all analytics data for the admin charts. Gathers:
- *   - Daily signups for last 30 days (with referral split)
- *   - Tier distribution (free/pro/founder counts)
- *   - Status distribution (pending/invited/activated)
- *   - Top 10 referrers
- */
 export async function getAdminAnalytics(): Promise<AdminAnalytics> {
   await requireAdmin();
 
-  const [dailySignups, tierRows, statusRows, topReferrers] = await Promise.all([
-    // Daily signups for last 30 days
+  const [dailySignups, tierRows, topReferrers] = await Promise.all([
     db
       .select({
         date: sql<string>`to_char(date_trunc('day', ${schema.waitlistEntries.createdAt}), 'YYYY-MM-DD')`,
@@ -208,31 +189,15 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics> {
         referrals: sql<number>`count(*) filter (where ${schema.waitlistEntries.referredByEntryId} is not null)::int`,
       })
       .from(schema.waitlistEntries)
-      .where(
-        sql`${schema.waitlistEntries.createdAt} >= now() - interval '30 days'`
-      )
+      .where(sql`${schema.waitlistEntries.createdAt} >= now() - interval '30 days'`)
       .groupBy(sql`date_trunc('day', ${schema.waitlistEntries.createdAt})`)
       .orderBy(sql`date_trunc('day', ${schema.waitlistEntries.createdAt})`),
 
-    // Tier distribution
     db
-      .select({
-        tier: schema.waitlistEntries.tier,
-        count: sql<number>`count(*)::int`,
-      })
+      .select({ tier: schema.waitlistEntries.tier, count: sql<number>`count(*)::int` })
       .from(schema.waitlistEntries)
       .groupBy(schema.waitlistEntries.tier),
 
-    // Status distribution
-    db
-      .select({
-        status: schema.waitlistEntries.status,
-        count: sql<number>`count(*)::int`,
-      })
-      .from(schema.waitlistEntries)
-      .groupBy(schema.waitlistEntries.status),
-
-    // Top 10 referrers
     db
       .select({
         fullName: schema.waitlistEntries.fullName,
@@ -245,7 +210,6 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics> {
       .limit(10),
   ]);
 
-  // Fill in missing days (days with 0 signups won't appear in the SQL output).
   const today = new Date();
   const dateMap = new Map(dailySignups.map((d) => [d.date, d]));
   const filledDaily: DailySignupPoint[] = [];
@@ -264,7 +228,6 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics> {
   return {
     dailySignups: filledDaily,
     tierDistribution: tierRows as TierDistribution[],
-    statusDistribution: statusRows as StatusDistribution[],
     topReferrers: topReferrers as TopReferrer[],
   };
 }

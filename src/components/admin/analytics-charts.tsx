@@ -1,41 +1,12 @@
 "use client";
 
 import * as React from "react";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  Cell,
-  Pie,
-  PieChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, Bar, BarChart, Cell, Pie, PieChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AdminAnalytics } from "@/lib/queries/admin";
 import { maskEmail } from "@/lib/format";
 
-/**
- * AnalyticsCharts
- * ---------------
- * Client component rendering 4 charts on the admin dashboard:
- *   1. Signups over time (area chart, 30 days)
- *   2. Top referrers (horizontal bar chart)
- *   3. Tier distribution (donut chart)
- *   4. Status distribution (donut chart)
- *
- * Data is fetched server-side by the admin page and passed in as props.
- * This component is `"use client"` because recharts needs the browser.
- */
 export type AnalyticsChartsProps = {
   data: AdminAnalytics;
   className?: string;
@@ -56,21 +27,12 @@ const referrerChartConfig = {
   referralCount: { label: "Referrals", color: "hsl(var(--chart-1))" },
 } satisfies ChartConfig;
 
-const tierChartConfig = {
-  count: { label: "Users", color: "hsl(var(--chart-1))" },
-} satisfies ChartConfig;
-
 export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
-  // Format dates for the X axis (e.g. "Jun 5")
   const signupData = data.dailySignups.map((d) => ({
     ...d,
-    label: new Date(d.date + "T00:00:00").toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    }),
+    label: new Date(d.date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }),
   }));
 
-  // Top referrers: use masked email if no name
   const referrerData = data.topReferrers.map((r) => ({
     name: r.fullName ?? maskEmail(r.email),
     referralCount: r.referralCount,
@@ -78,13 +40,10 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
 
   return (
     <div className={className}>
-      {/* Row 1: Signups over time (full width) */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-lg">Signups over the last 30 days</CardTitle>
-          <CardDescription>
-            Daily new waitlist signups, split by whether they came via a referral.
-          </CardDescription>
+          <CardDescription>Daily new signups, split by referral source.</CardDescription>
         </CardHeader>
         <CardContent>
           {signupData.every((d) => d.signups === 0) ? (
@@ -103,45 +62,18 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="label"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  interval="preserveStartEnd"
-                  minTickGap={32}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  allowDecimals={false}
-                  width={32}
-                />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} interval="preserveStartEnd" minTickGap={32} />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} allowDecimals={false} width={32} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Area
-                  type="monotone"
-                  dataKey="signups"
-                  stroke="hsl(var(--chart-1))"
-                  fill="url(#fillSignups)"
-                  strokeWidth={2}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="referrals"
-                  stroke="hsl(var(--chart-2))"
-                  fill="url(#fillReferrals)"
-                  strokeWidth={2}
-                />
+                <Area type="monotone" dataKey="signups" stroke="hsl(var(--chart-1))" fill="url(#fillSignups)" strokeWidth={2} />
+                <Area type="monotone" dataKey="referrals" stroke="hsl(var(--chart-2))" fill="url(#fillReferrals)" strokeWidth={2} />
               </AreaChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
-      {/* Row 2: Top referrers + Tier/Status donuts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Top referrers (spans 2 cols on desktop) */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg">Top referrers</CardTitle>
@@ -152,41 +84,18 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
               <EmptyChart />
             ) : (
               <ChartContainer config={referrerChartConfig} className="h-[280px] w-full">
-                <BarChart
-                  data={referrerData}
-                  layout="vertical"
-                  margin={{ left: 8, right: 16, top: 8 }}
-                >
+                <BarChart data={referrerData} layout="vertical" margin={{ left: 8, right: 16, top: 8 }}>
                   <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-                  <XAxis
-                    type="number"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    allowDecimals={false}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    width={120}
-                    tick={{ fontSize: 12 }}
-                  />
+                  <XAxis type="number" tickLine={false} axisLine={false} tickMargin={8} allowDecimals={false} />
+                  <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} tickMargin={8} width={120} tick={{ fontSize: 12 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar
-                    dataKey="referralCount"
-                    fill="hsl(var(--chart-1))"
-                    radius={4}
-                  />
+                  <Bar dataKey="referralCount" fill="hsl(var(--chart-1))" radius={4} />
                 </BarChart>
               </ChartContainer>
             )}
           </CardContent>
         </Card>
 
-        {/* Tier distribution donut */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Tier distribution</CardTitle>
@@ -196,17 +105,10 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
             {data.tierDistribution.every((t) => t.count === 0) ? (
               <EmptyChart />
             ) : (
-              <ChartContainer config={tierChartConfig} className="mx-auto h-[280px]">
+              <ChartContainer config={{ count: { label: "Users", color: "hsl(var(--chart-1))" }} satisfies ChartConfig} className="mx-auto h-[280px]">
                 <PieChart>
                   <ChartTooltip content={<ChartTooltipContent nameKey="tier" />} />
-                  <Pie
-                    data={data.tierDistribution}
-                    dataKey="count"
-                    nameKey="tier"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={2}
-                  >
+                  <Pie data={data.tierDistribution} dataKey="count" nameKey="tier" innerRadius={60} outerRadius={90} paddingAngle={2}>
                     {data.tierDistribution.map((entry) => (
                       <Cell key={entry.tier} fill={TIER_COLORS[entry.tier] ?? "hsl(var(--chart-1))"} />
                     ))}
@@ -214,13 +116,15 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
                 </PieChart>
               </ChartContainer>
             )}
-            <Legend
-              items={data.tierDistribution.map((t) => ({
-                label: t.tier,
-                value: t.count,
-                color: TIER_COLORS[t.tier] ?? "hsl(var(--chart-1))",
-              }))}
-            />
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              {data.tierDistribution.map((t) => (
+                <div key={t.tier} className="flex items-center gap-1.5 text-xs">
+                  <span className="size-2.5 rounded-full" style={{ backgroundColor: TIER_COLORS[t.tier] ?? "hsl(var(--chart-1))" }} aria-hidden />
+                  <span className="capitalize text-muted-foreground">{t.tier}</span>
+                  <span className="font-semibold tabular-nums">{t.count}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -228,26 +132,6 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
   );
 }
 
-/** Internal: small legend list below donut charts. */
-function Legend({ items }: { items: Array<{ label: string; value: number; color: string }> }) {
-  return (
-    <div className="mt-4 flex flex-wrap justify-center gap-3">
-      {items.map((item) => (
-        <div key={item.label} className="flex items-center gap-1.5 text-xs">
-          <span
-            className="size-2.5 rounded-full"
-            style={{ backgroundColor: item.color }}
-            aria-hidden
-          />
-          <span className="capitalize text-muted-foreground">{item.label}</span>
-          <span className="font-semibold tabular-nums">{item.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Internal: empty state placeholder. */
 function EmptyChart() {
   return (
     <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
