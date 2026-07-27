@@ -9,7 +9,7 @@
 --   5. Webhook integrations (Slack/Discord)
 --   6. Signup geography (country/city on waitlist_entries)
 --
--- Safe to run on an existing database — all additive.
+-- Safe to run on an existing database — all additive + idempotent policies.
 -- ============================================================================
 
 -- 1. Add geography columns to waitlist_entries -------------------------------
@@ -41,6 +41,8 @@ create index if not exists position_history_recorded_at_idx
   on public.position_history (recorded_at);
 
 alter table public.position_history enable row level security;
+
+drop policy if exists "Users can read own position history" on public.position_history;
 create policy "Users can read own position history"
   on public.position_history for select
   using (exists (
@@ -83,6 +85,8 @@ create table if not exists public.user_milestones (
 create index if not exists user_milestones_entry_id_idx on public.user_milestones (entry_id);
 
 alter table public.user_milestones enable row level security;
+
+drop policy if exists "Users can read own milestones" on public.user_milestones;
 create policy "Users can read own milestones"
   on public.user_milestones for select
   using (exists (
