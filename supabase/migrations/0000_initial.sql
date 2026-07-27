@@ -15,7 +15,7 @@
 --
 --   Option B (manual): Paste this entire file into the Supabase SQL Editor
 --   and run it. This creates everything from scratch. Safe to re-run
---   (uses `if not exists` / `or replace`).
+--   (uses `if not exists` / `or replace` / `drop ... if exists`).
 --
 -- After applying, set these env vars in `.env.local` (see .env.example):
 --   - NEXT_PUBLIC_SUPABASE_URL
@@ -102,10 +102,13 @@ begin
 end;
 $$;
 
+-- Drop + recreate so re-running this script (and Supabase Preview) is safe.
+drop trigger if exists profiles_set_updated_at on public.profiles;
 create trigger profiles_set_updated_at
   before update on public.profiles
   for each row execute function public.set_updated_at();
 
+drop trigger if exists waitlist_entries_set_updated_at on public.waitlist_entries;
 create trigger waitlist_entries_set_updated_at
   before update on public.waitlist_entries
   for each row execute function public.set_updated_at();
