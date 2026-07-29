@@ -20,7 +20,7 @@ Production-ready SaaS waitlist with viral referral loops, live position tracking
 
 | Landing / Hero | How it works |
 |---------------|--------------|
-| ![Landing](docs/screenshots/Screenshot%202026-07-27%20051317.png) | ![How it works](docs/screenshots/Screenshot%2026-07-29%214553.png) |
+| ![Landing](docs/screenshots/Screenshot%202026-07-27%20051317.png) | ![How it works](docs/screenshots/work.png) |
 
 | Dashboard | Admin / Analytics |
 |-----------|-------------------|
