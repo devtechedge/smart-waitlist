@@ -2,6 +2,13 @@ import "server-only";
 import { eq, sql, and, gte } from "drizzle-orm";
 
 import { db, schema } from "@/db";
+import {
+  FLAG_THRESHOLD,
+  isTempEmail,
+  normalizeEmail,
+} from "@/lib/fraud-email";
+
+export { FLAG_THRESHOLD, isTempEmail, normalizeEmail } from "@/lib/fraud-email";
 
 /**
  * Anti-Fraud Detection System
@@ -20,9 +27,6 @@ import { db, schema } from "@/db";
  * auditable. Each signal contributes a fixed number of points.
  */
 
-/** Score threshold above which an entry is flagged for review. */
-export const FLAG_THRESHOLD = 70;
-
 /** Max signups per IP per hour before flagging. */
 const MAX_SIGNUPS_PER_IP_PER_HOUR = 3;
 
@@ -31,53 +35,6 @@ const MAX_SIGNUPS_PER_FINGERPRINT_PER_HOUR = 2;
 
 /** Max referrals a single code can receive per hour before flagging. */
 const MAX_REFERRALS_PER_HOUR = 10;
-
-// ============================================================================
-// Email pattern detection
-// ============================================================================
-
-/**
- * Extracts the "base" email for plus-addressing detection.
- *   "user+test@gmail.com" → "user@gmail.com"
- *   "user@gmail.com"      → "user@gmail.com"
- *
- * Also normalizes dot-tricks for Gmail:
- *   "u.s.e.r@gmail.com" → "user@gmail.com"
- */
-export function normalizeEmail(email: string): string {
-  const [local, domain] = email.toLowerCase().split("@");
-  if (!local || !domain) return email.toLowerCase();
-
-  // Strip plus-addressing
-  const baseLocal = local.split("+")[0] ?? local;
-
-  // Gmail ignores dots — strip them for gmail/googlemail domains
-  if (domain === "gmail.com" || domain === "googlemail.com") {
-    return `${baseLocal.replace(/\./g, "")}@${domain}`;
-  }
-
-  return `${baseLocal}@${domain}`;
-}
-
-/**
- * Detects if an email looks like a throwaway/temporary email domain.
- * Not exhaustive — covers the most common temp-mail providers.
- */
-const TEMP_DOMAINS = new Set([
-  "tempmail.com", "throwaway.email", "mailinator.com", "guerrillamail.com",
-  "10minutemail.com", "trashmail.com", "yopmail.com", "getnada.com",
-  "temp-mail.org", "sharklasers.com", "guerrillamailblock.com",
-  "pokemail.net", "spam4.me", "dispostable.com", "mintemail.com",
-]);
-
-export function isTempEmail(email: string): boolean {
-  const domain = email.toLowerCase().split("@")[1];
-  return domain ? TEMP_DOMAINS.has(domain) : false;
-}
-
-// ============================================================================
-// Fraud score calculation
-// ============================================================================
 
 export type FraudAssessment = {
   score: number;           // 0-100
@@ -108,13 +65,11 @@ export async function assessSignupFraud(params: {
   let score = 0;
   const reasons: string[] = [];
 
-  // 1. Temp email check
   if (isTempEmail(email)) {
     score += 40;
     reasons.push("Temporary email domain");
   }
 
-  // 2. IP velocity check
   if (ip) {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const [ipCount] = await db
@@ -134,7 +89,6 @@ export async function assessSignupFraud(params: {
     }
   }
 
-  // 3. Fingerprint velocity check
   if (fingerprint) {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const [fpCount] = await db
@@ -157,7 +111,6 @@ export async function assessSignupFraud(params: {
     reasons.push("No browser fingerprint provided");
   }
 
-  // 4. Email pattern match (plus-addressing of existing user)
   const normalized = normalizeEmail(email);
   if (normalized !== email.toLowerCase()) {
     const [existing] = await db
@@ -172,7 +125,6 @@ export async function assessSignupFraud(params: {
     }
   }
 
-  // 5. Referral velocity check
   if (referrerEntryId) {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const [refCount] = await db
@@ -198,17 +150,13 @@ export async function assessSignupFraud(params: {
   return { score: finalScore, flagged, reasons };
 }
 
-// ============================================================================
-// Fraud stats for admin dashboard
-// ============================================================================
-
 export type FraudStats = {
   flaggedCount: number;
   bannedCount: number;
   avgFraudScore: number;
-  highRiskCount: number;   // score >= 70
-  mediumRiskCount: number; // score 30-69
-  lowRiskCount: number;    // score < 30
+  highRiskCount: number;
+  mediumRiskCount: number;
+  lowRiskCount: number;
   topFlaggedIps: Array<{ ip: string; count: number }>;
 };
 

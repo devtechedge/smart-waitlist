@@ -30,19 +30,28 @@ export type AuthUser = {
 
 /** Fetch the current authenticated user, or `null` if not signed in. */
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await Promise.race([
+      supabase.auth.getUser(),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("auth timeout")), 2500);
+      }),
+    ]);
 
-  if (!user || !user.email) return null;
+    if (!user || !user.email) return null;
 
-  const fullName =
-    (user.user_metadata?.full_name as string | undefined) ??
-    (user.user_metadata?.name as string | undefined) ??
-    null;
+    const fullName =
+      (user.user_metadata?.full_name as string | undefined) ??
+      (user.user_metadata?.name as string | undefined) ??
+      null;
 
-  return { id: user.id, email: user.email, fullName };
+    return { id: user.id, email: user.email, fullName };
+  } catch {
+    return null;
+  }
 }
 
 /**

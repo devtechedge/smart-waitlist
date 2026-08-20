@@ -1,10 +1,11 @@
 "use server";
 
-import { z } from "zod";
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { publicAppOrigin } from "@/lib/public-env";
+import { signInSchema, signUpSchema } from "@/lib/auth-validation";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 /**
  * Auth Server Actions
@@ -27,47 +28,6 @@ export type ActionState = {
   field?: "email" | "password" | "fullName" | "refCode" | "form";
 };
 
-/** Common Zod primitives reused across auth actions. */
-const emailField = z
-  .string()
-  .min(1, "Email is required")
-  .email("Please enter a valid email address")
-  .max(254, "Email is too long")
-  .transform((s) => s.trim().toLowerCase());
-
-const passwordField = z
-  .string()
-  .min(8, "Password must be at least 8 characters")
-  .max(72, "Password must be at most 72 characters")
-  .regex(/[a-z]/, "Password must contain a lowercase letter")
-  .regex(/[A-Z]/, "Password must contain an uppercase letter")
-  .regex(/[0-9]/, "Password must contain a number");
-
-const fullNameField = z
-  .string()
-  .min(1, "Full name is required")
-  .max(100, "Full name is too long")
-  .transform((s) => s.trim());
-
-const refCodeField = z
-  .string()
-  .max(32, "Referral code is too long")
-  .optional()
-  .transform((s) => (s ? s.trim().toLowerCase() : undefined));
-
-const signInSchema = z.object({
-  email: emailField,
-  password: z.string().min(1, "Password is required"),
-});
-
-const signUpSchema = z.object({
-  email: emailField,
-  password: passwordField,
-  fullName: fullNameField,
-  refCode: refCodeField,
-});
-
-/** Helper: read a FormData field as a string (or undefined). */
 function getString(formData: FormData, key: string): string | undefined {
   const v = formData.get(key);
   return typeof v === "string" ? v : undefined;
@@ -117,8 +77,6 @@ export async function signInAction(
     };
   }
 
-  // Successful sign-in. Check for a `redirect` query param via formData.
-  // (Forms include a hidden `redirect` input populated by the page.)
   const redirectPath = getString(formData, "redirect") ?? "/dashboard";
   redirect(safeRedirectPath(redirectPath));
 }
@@ -184,44 +142,18 @@ export async function signUpAction(
     };
   }
 
-  // If email confirmation is enabled, `session` is null and `user` exists
-  // but `user.confirmed_at` is null. Redirect to a "check your email" page.
   if (!data.session) {
     redirect("/check-email");
   }
 
-  // Otherwise the user is immediately authenticated — go to dashboard.
   redirect("/dashboard");
 }
 
 /**
  * Sign-out action. Clears the Supabase session and redirects to `/`.
- * Called from a small client-side form (`<form action={signOutAction}>`).
  */
 export async function signOutAction(): Promise<void> {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   redirect("/");
-}
-
-/**
- * Defensive guard: only allow redirects to same-origin absolute paths or
- * site-relative paths starting with "/". Prevents open-redirect attacks via
- * crafted `?redirect=https://evil.com` query params.
- */
-function safeRedirectPath(input: string): string {
-  if (!input) return "/dashboard";
-
-  // Reject anything with a scheme (http://, https://, //evil.com).
-  if (/^\/\//.test(input) || /^[a-z][a-z0-9+.-]*:/i.test(input)) {
-    return "/dashboard";
-  }
-
-  // Reject backslashes (some browsers treat them like forward slashes).
-  if (input.includes("\\")) return "/dashboard";
-
-  // Must start with a single slash.
-  if (!input.startsWith("/")) return "/dashboard";
-
-  return input;
 }

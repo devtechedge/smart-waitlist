@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdminEntries, requireAdmin, type AdminWaitlistRow } from "@/lib/queries/admin";
+import { escapeCsv } from "@/lib/csv";
 
 /**
  * Admin Server Actions
@@ -114,15 +115,3 @@ export async function exportWaitlistCsvAction(): Promise<
   };
 }
 
-/**
- * RFC 4180 CSV field escaper. Wraps the field in double quotes if it
- * contains any of: comma, double quote, newline, or carriage return.
- * Embedded double quotes are doubled.
- */
-function escapeCsv(value: string | number): string {
-  const s = String(value ?? "");
-  if (s.includes(",") || s.includes('"') || s.includes("\n") || s.includes("\r")) {
-    return `"${s.replace(/"/g, '""')}"`;
-  }
-  return s;
-}

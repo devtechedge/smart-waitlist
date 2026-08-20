@@ -59,9 +59,18 @@ export async function updateSession(
   // IMPORTANT: `getUser()` is the call that triggers token refresh.
   // Do not remove it, and do not replace it with `getSession()` (which is
   // cached and won't refresh).
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const result = await Promise.race([
+      supabase.auth.getUser(),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("auth timeout")), 2500);
+      }),
+    ]);
+    user = result.data.user;
+  } catch {
+    user = null;
+  }
 
   const pathname = request.nextUrl.pathname;
 

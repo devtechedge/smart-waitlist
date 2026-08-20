@@ -36,7 +36,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
   const [stats, referrerInfo, launchSettings, recentSignups] = await Promise.all([
     getLandingStats(),
-    refCode ? resolveReferralCode(refCode) : Promise.resolve(null),
+    refCode ? resolveReferralCode(refCode).catch(() => null) : Promise.resolve(null),
     getLaunchSettings().catch(() => ({ launchDate: null, launchMode: "waitlist" as const })),
     getRecentSignups(10).catch(() => []),
   ]);

@@ -7,6 +7,11 @@ import { db, schema, type WaitlistEntry } from "@/db";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { publicAppOrigin } from "@/lib/public-env";
 import { getCurrentUser, computePosition } from "@/lib/queries/waitlist";
+import {
+  generateReferralCode,
+  isSelfReferral,
+  normalizeReferralCode,
+} from "@/lib/waitlist-rules";
 
 /**
  * Waitlist Server Actions
@@ -51,26 +56,8 @@ export type ClaimFailed = {
 const refCodeSchema = z
   .string()
   .min(1, "Referral code is required")
-  .max(32, "Referral code is too long")
-  .regex(/^[a-z0-9]+$/i, "Referral code must be alphanumeric")
-  .transform((s) => s.trim().toLowerCase());
-
-/**
- * Generate a fresh 6-char base36 referral code using `crypto.getRandomValues`.
- *
- * 36^6 = 2,176,782,336 ≈ 2.2B possible codes. For a waitlist of N users,
- * the birthday-paradox collision probability per generation is roughly
- * N / 2.2B. We retry on unique-constraint violation to be safe.
- */
-function generateReferralCode(): string {
-  const MAX_CODE = 2_176_782_336; // 36^6
-  // `crypto.getRandomValues` is available in Node 19+ (server) and all
-  // modern browsers. Uint32Array gives us values in [0, 2^32-1].
-  const buffer = new Uint32Array(1);
-  crypto.getRandomValues(buffer);
-  const num = (buffer[0] ?? 0) % MAX_CODE;
-  return num.toString(36).padStart(6, "0");
-}
+  .transform((s) => normalizeReferralCode(s))
+  .refine((s): s is string => s !== null, "Referral code must be alphanumeric");
 
 /**
  * Resolve a referral code to the referrer's entry, returning the entry ID.
@@ -179,7 +166,9 @@ export async function claimOrCreateWaitlistEntryAction(): Promise<
   // Self-referral guard: if the resolved referrer's userId == current user,
   // drop the attribution (a user can't refer themselves).
   const safeReferrer =
-    referrer && referrer.referrerUserId !== user.id ? referrer : null;
+    referrer && !isSelfReferral(referrer.referrerUserId, user.id)
+      ? referrer
+      : null;
 
   // Generate a unique referral code (retry on collision).
   const newReferralCode = await generateUniqueReferralCode();
