@@ -105,12 +105,10 @@ Security headers (frame deny, nosniff, referrer, permissions-policy, HSTS on Ver
 
 ## 8. Dependency audit (2026-08-21)
 
-`npm audit --omit=dev` after dropping unused `@stripe/stripe-js`:
+- **Done:** Next `16.2.9` → `16.3.1` (PostCSS XSS / source-map advisories).
+- **Done:** Removed `@vercel/og` (sharp/libvips CVEs). OG images use `next/og`.
 
-- **postcss** (via Next 16.2.9) — high, fix is `next@16.3.x` (held; Dependabot ignores majors).
-- **sharp** via `@vercel/og@0.11.x` — high, fix is `@vercel/og@1` (major). Held.
-
-Do **not** auto-merge majors (eslint, recharts, lucide, next, typescript). Dependabot is patch/minor only.
+Dependabot still ignores *unrelated* majors (eslint 10, recharts 3, lucide 1, typescript 7) that have broken preview deploys on other repos.
 
 ---
 

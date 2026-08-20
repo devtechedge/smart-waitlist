@@ -1,4 +1,4 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
 import { getPublicProfile } from "@/lib/queries/public";
@@ -17,8 +17,7 @@ import { formatPosition } from "@/lib/format";
  *   - Their tier badge
  *   - Smart Waitlist branding
  *
- * Uses @vercel/og (Satori under the hood) to render React/JSX → PNG at the
- * edge. Runs on Vercel's Edge Runtime for global low-latency generation.
+ * Uses `next/og` (Satori) to render React/JSX → PNG.
  */
 
 export const runtime = "edge";
