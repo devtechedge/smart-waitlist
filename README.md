@@ -2,6 +2,7 @@
 
 Production-ready SaaS waitlist with viral referral loops, live position tracking, admin analytics, Stripe tiers, and full RLS. Built with Next.js 16, Supabase, Drizzle ORM, and shadcn/ui.
 
+[![CI](https://github.com/devtechedge/smart-waitlist/actions/workflows/ci.yml/badge.svg)](https://github.com/devtechedge/smart-waitlist/actions/workflows/ci.yml)
 ![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
@@ -32,7 +33,7 @@ Production-ready SaaS waitlist with viral referral loops, live position tracking
 - **Real-time position tracking** — dashboard shows rank, referrals, and shareable link
 - **Admin analytics** — waitlist table, conversion funnel, geo heatmap, CSV export
 - **Stripe tiers** — paid upgrades and promo codes
-- **Secure by default** — Supabase RLS on every table, Zod validation, service-role never reaches the browser
+- **Secure by default** — Supabase RLS, Zod validation, admin allow-list, webhook signatures. See [SECURITY.md](SECURITY.md).
 - **Modern stack** — Next.js 16 App Router + Server Actions, Drizzle ORM, Tailwind v4 + shadcn/ui, strict TypeScript
 
 ## Tech Stack
@@ -63,6 +64,16 @@ npm run dev
 Open http://localhost:3000.
 
 See `.env.example` for the full list of required variables.
+
+## Tests
+
+```bash
+npm test            # unit (pure helpers: ranking, auth, fraud email, CSV, redirects)
+npm run typecheck
+npm run test:e2e    # Playwright Chromium smokes (landing, sign-in, auth gate, 404)
+```
+
+CI runs all three on every push to `main`. Dependabot opens weekly patch/minor PRs only (majors ignored).
 
 ## License
 
