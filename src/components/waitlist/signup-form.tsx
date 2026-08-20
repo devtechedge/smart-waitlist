@@ -63,7 +63,7 @@ export function SignupForm({
   }, [state]);
 
   return (
-    <Card className={cn("w-full max-w-md", className)}>
+    <Card className={cn("w-full max-w-md", className)} data-testid="signup-form">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Join the waitlist</CardTitle>
         <CardDescription>

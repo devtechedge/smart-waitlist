@@ -31,7 +31,7 @@ export type FuturisticHeroProps = {
 
 export function FuturisticHero({ totalUsers, className, children }: FuturisticHeroProps) {
   return (
-    <section className={cn("relative isolate overflow-hidden", className)}>
+    <section className={cn("relative isolate overflow-hidden", className)} data-testid="landing-hero">
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-2">
         {/* ── Left: Text + CTA ──────────────────────────────────────────── */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">

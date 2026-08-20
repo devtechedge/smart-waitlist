@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
  */
 export default function NotFound() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
+    <main className="flex flex-1 flex-col items-center justify-center px-4 py-16" data-testid="not-found">
       <div className="flex max-w-md flex-col items-center text-center">
         <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Compass className="size-8" aria-hidden />

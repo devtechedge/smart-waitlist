@@ -51,7 +51,7 @@ export function SignInForm({
   }, [state]);
 
   return (
-    <Card className={cn("w-full max-w-md", className)}>
+    <Card className={cn("w-full max-w-md", className)} data-testid="signin-form">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Welcome back</CardTitle>
         <CardDescription>Sign in to check your waitlist position.</CardDescription>

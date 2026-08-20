@@ -22,7 +22,7 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="mx-auto w-full max-w-5xl px-6 py-20">
+    <section className="mx-auto w-full max-w-5xl px-6 py-20" data-testid="how-it-works">
       <motion.div
         className="mb-12 text-center"
         initial={{ opacity: 0, y: 20 }}
