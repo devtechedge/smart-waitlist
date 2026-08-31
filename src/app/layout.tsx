@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 
@@ -64,6 +65,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <I18nProvider>
+            <div className="fixed right-3 top-3 z-[60] rounded-md border border-border/60 bg-background/80 shadow-sm backdrop-blur-md">
+              <ThemeToggle />
+            </div>
             {children}
             <Toaster position="top-center" richColors closeButton />
           </I18nProvider>

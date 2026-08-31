@@ -4,7 +4,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/waitlist/sign-out-button";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/lib/i18n";
 
 /**
@@ -39,7 +38,7 @@ export function DashboardNav({
         className,
       )}
     >
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between pl-4 pr-14 sm:pl-6 sm:pr-16">
         {/* Left: brand */}
         <Link
           href="/dashboard"
@@ -80,7 +79,6 @@ export function DashboardNav({
             </span>
           ) : null}
 
-          <ThemeToggle />
           <LanguageSwitcher />
           <SignOutButton iconOnly label="Sign out" />
         </nav>
