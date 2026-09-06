@@ -1,6 +1,6 @@
 # Security Assessment — Smart Waitlist & Referral Engine
 
-**Date:** 2026-08-21  
+**Date:** 2026-09-06  
 **Scope:** Auth, RLS, XSS, injection, Stripe webhooks, CORS, secrets, admin allow-list  
 **Context:** Public deploy is a **real full-stack app** (Vercel + Supabase Auth/Postgres + optional Stripe). This is not a client-only demo.
 
@@ -121,3 +121,11 @@ npm run typecheck
 npm run test:e2e
 npm audit --omit=dev
 ```
+
+## Repository visibility
+
+This repository is currently **public** for portfolio review. When the open-source
+build story is no longer needed, **the GitHub repo will go private**. Making the
+repo private reduces source disclosure; it does **not** replace strong production
+secrets, auth allow-lists, webhook signatures, or Vercel/Actions environment
+hygiene. Rotate any credential that was pasted into chat, tickets, or screenshots.

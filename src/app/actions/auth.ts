@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { publicAppOrigin } from "@/lib/public-env";
 import { signInSchema, signUpSchema } from "@/lib/auth-validation";
 import { safeRedirectPath } from "@/lib/safe-redirect";
+import { authRateLimitKey, checkAuthRateLimit } from "@/lib/auth-rate-limit";
 
 /**
  * Auth Server Actions
@@ -54,6 +55,15 @@ export async function signInAction(
       ok: false,
       error: issue.message,
       field: issue.path[0] === "email" ? "email" : "password",
+    };
+  }
+
+  const signInLimit = checkAuthRateLimit(authRateLimitKey("signin", parsed.data.email));
+  if (!signInLimit.ok) {
+    return {
+      ok: false,
+      error: `Too many sign-in attempts. Try again in ${signInLimit.retryAfterSec}s.`,
+      field: "form",
     };
   }
 
@@ -114,6 +124,15 @@ export async function signUpAction(
       ok: false,
       error: issue.message,
       field: fieldMap[issue.path[0] as string] ?? "form",
+    };
+  }
+
+  const signUpLimit = checkAuthRateLimit(authRateLimitKey("signup", parsed.data.email));
+  if (!signUpLimit.ok) {
+    return {
+      ok: false,
+      error: `Too many sign-up attempts. Try again in ${signUpLimit.retryAfterSec}s.`,
+      field: "form",
     };
   }
 
