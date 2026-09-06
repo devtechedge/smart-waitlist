@@ -9,7 +9,6 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "type-check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test src/lib/*.test.ts",
     "test:e2e": "playwright test",
     "audit": "npm audit --omit=dev",

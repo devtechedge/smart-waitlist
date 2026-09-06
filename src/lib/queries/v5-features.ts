@@ -16,7 +16,6 @@ import { computePosition } from "@/lib/queries/waitlist";
  *   6. Promo codes (validation + redemption)
  *   7. Conversion funnel (visit → signup → referral → upgrade)
  *   8. Webhook configs (Slack/Discord)
- *   9. (i18n is client-side, no queries needed)
  *   10. Position history (time-series)
  */
 

@@ -1,23 +1,9 @@
-import * as React from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/waitlist/sign-out-button";
-import { LanguageSwitcher } from "@/lib/i18n";
 
-/**
- * DashboardNav
- * ------------
- * Server Component. Top navigation bar for `/dashboard` and `/admin`.
- * Shows the app name/logo on the left, and contextual actions on the right
- * (sign-out button; admin link if the user is an admin).
- *
- * Props:
- *   - `userEmail`   : the signed-in user's email (for display in a menu trigger).
- *   - `showAdmin`   : whether to show the "Admin" link (user is on allow-list).
- *   - `active`      : which section is active, for link highlighting.
- */
 export type DashboardNavProps = {
   userEmail?: string;
   showAdmin?: boolean;
@@ -79,7 +65,6 @@ export function DashboardNav({
             </span>
           ) : null}
 
-          <LanguageSwitcher />
           <SignOutButton iconOnly label="Sign out" />
         </nav>
       </div>
