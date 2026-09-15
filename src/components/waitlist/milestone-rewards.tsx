@@ -64,7 +64,7 @@ export function MilestoneRewards({ milestones, currentReferralCount, className }
         <CardDescription>
           Unlock perks as you refer more friends. {nextMilestone
             ? `${nextMilestone.threshold - currentReferralCount} more referrals to unlock "${nextMilestone.title}"`
-            : "All milestones unlocked — you're a legend!"}
+            : "All milestones unlocked - you're a legend!"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

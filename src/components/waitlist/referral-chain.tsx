@@ -45,13 +45,13 @@ export function ReferralChain({ root, className }: ReferralChainProps) {
           Your Referral Chain
         </CardTitle>
         <CardDescription>
-          Everyone who signed up using your link (and their referrals) — up to 3 levels deep.
+          Everyone who signed up using your link (and their referrals) - up to 3 levels deep.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {!root ? (
           <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
-            No referrals yet — share your link to grow your chain!
+            No referrals yet - share your link to grow your chain!
           </div>
         ) : (
           <div className="overflow-x-auto">

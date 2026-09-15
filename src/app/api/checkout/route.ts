@@ -12,7 +12,7 @@ import { eq } from "drizzle-orm";
  * Creates a Stripe Checkout Session for a tier upgrade.
  *
  * Body: { tier: "pro" | "founder" }
- * Returns: { url: string } — redirect the browser to this URL
+ * Returns: { url: string } - redirect the browser to this URL
  *
  * If Stripe isn't configured (no STRIPE_SECRET_KEY), returns 501 so the
  * client can fall back to the demo instant-upgrade action.

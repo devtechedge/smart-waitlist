@@ -39,7 +39,7 @@ export default async function LeaderboardPage() {
         </p>
       </div>
 
-      {/* Podium — top 3 */}
+      {/* Podium - top 3 */}
       {entries.length >= 3 && (
         <div className="mb-10 grid grid-cols-3 gap-2 sm:gap-4">
           <PodiumCard entry={entries[1]!} place={2} />
@@ -62,7 +62,7 @@ export default async function LeaderboardPage() {
         <CardContent>
           {entries.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              No referrals yet — be the first to share your link!
+              No referrals yet - be the first to share your link!
             </p>
           ) : (
             <ol className="space-y-1">

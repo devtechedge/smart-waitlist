@@ -12,7 +12,7 @@ import { AnimatedCounter } from "@/components/landing/animated-counter";
 /**
  * FuturisticHero
  * --------------
- * The new landing page hero — modern, sleek, futuristic with:
+ * The new landing page hero - modern, sleek, futuristic with:
  *   - Animated gradient headline
  *   - 3D floating ticket visual with orbiting referral icons
  *   - Glassmorphic signup CTA
@@ -123,7 +123,7 @@ export function FuturisticHero({ totalUsers, className, children }: FuturisticHe
   );
 }
 
-/** Feature bullets row — animated in on scroll. */
+/** Feature bullets row - animated in on scroll. */
 export function FeatureBullets() {
   const features = [
     { icon: Zap, title: "Instant signup", description: "Join the waitlist in under 30 seconds." },

@@ -14,7 +14,7 @@ import {
 import { relations, type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 
 /**
- * Smart Waitlist — Drizzle Schema
+ * Smart Waitlist - Drizzle Schema
  * -------------------------------
  * Two tables:
  *   - `profiles`         : auth-linked user metadata (1:1 with auth.users)
@@ -129,16 +129,16 @@ export const waitlistEntries = pgTable(
 
     status: waitlistStatus("status").notNull().default("pending"),
 
-    /** Early access tier — affects position ranking (pro/founder get priority). */
+    /** Early access tier - affects position ranking (pro/founder get priority). */
     tier: waitlistTier("tier").notNull().default("free"),
 
     /** Whether the user has customized their referral code (vs auto-generated). */
     hasCustomCode: boolean("has_custom_code").notNull().default(false),
 
     // ── Anti-Fraud fields (Feature 4) ────────────────────────────────────
-    /** IP address at signup — used for multi-account detection. */
+    /** IP address at signup - used for multi-account detection. */
     signupIp: text("signup_ip"),
-    /** Browser fingerprint hash — detects same-device multi-accounting. */
+    /** Browser fingerprint hash - detects same-device multi-accounting. */
     fingerprint: text("fingerprint"),
     /** Fraud risk score 0-100 (0 = clean, 100 = definitely fraudulent). */
     fraudScore: integer("fraud_score").notNull().default(0),
@@ -152,7 +152,7 @@ export const waitlistEntries = pgTable(
     banReason: text("ban_reason"),
 
     // ── Stripe fields (Feature 1) ────────────────────────────────────────
-    /** Stripe customer ID — set after first payment. */
+    /** Stripe customer ID - set after first payment. */
     stripeCustomerId: text("stripe_customer_id"),
     /** Stripe subscription ID (for recurring Pro tier). */
     stripeSubscriptionId: text("stripe_subscription_id"),
@@ -196,7 +196,7 @@ export const waitlistEntries = pgTable(
  * `admin_audit_log`
  * -----------------
  * Records every admin action (ban, unban, tier change, delete, invite) for
- * compliance and accountability. Append-only — never updated or deleted.
+ * compliance and accountability. Append-only - never updated or deleted.
  */
 export const adminAuditLog = pgTable(
   "admin_audit_log",
@@ -210,7 +210,7 @@ export const adminAuditLog = pgTable(
     targetEntryId: uuid("target_entry_id"),
     /** The target entry's email (denormalized for readability). */
     targetEmail: text("target_email"),
-    /** Old value (e.g. old tier) — for diff display. */
+    /** Old value (e.g. old tier) - for diff display. */
     oldValue: text("old_value"),
     /** New value (e.g. new tier). */
     newValue: text("new_value"),
@@ -228,7 +228,7 @@ export const adminAuditLog = pgTable(
 );
 
 /**
- * Drizzle relations — enable the query builder to traverse FKs.
+ * Drizzle relations - enable the query builder to traverse FKs.
  *   profile.waitlistEntry  (1:1)
  *   waitlistEntry.user     (1:1, may be null)
  *   waitlistEntry.referredBy (1:1 self, may be null)
@@ -259,10 +259,10 @@ export const waitlistEntriesRelations = relations(waitlistEntries, ({ one, many 
 }));
 
 // ============================================================================
-// v5 Tables — 10 Complex Features
+// v5 Tables - 10 Complex Features
 // ============================================================================
 
-/** Position history — tracks position changes over time for charting. */
+/** Position history - tracks position changes over time for charting. */
 export const positionHistory = pgTable(
   "position_history",
   {
@@ -279,7 +279,7 @@ export const positionHistory = pgTable(
   ],
 );
 
-/** Milestone definitions — e.g. "First Referral", "Connector", "Legend". */
+/** Milestone definitions - e.g. "First Referral", "Connector", "Legend". */
 export const milestones = pgTable(
   "milestones",
   {
@@ -307,7 +307,7 @@ export const userMilestones = pgTable(
   ],
 );
 
-/** VIP promo codes — give instant tier upgrades. */
+/** VIP promo codes - give instant tier upgrades. */
 export const promoCodes = pgTable(
   "promo_codes",
   {
@@ -337,7 +337,7 @@ export const webhookConfigs = pgTable(
   },
 );
 
-/** App settings — single-row table for launch date, mode, etc. */
+/** App settings - single-row table for launch date, mode, etc. */
 export const appSettings = pgTable(
   "app_settings",
   {
@@ -349,7 +349,7 @@ export const appSettings = pgTable(
 );
 
 /**
- * Convenience type aliases — used by Server Actions and Server Components
+ * Convenience type aliases - used by Server Actions and Server Components
  * for full type inference from the DB schema all the way to the UI.
  */
 export type Profile = InferSelectModel<typeof profiles>;

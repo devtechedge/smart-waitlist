@@ -1,6 +1,6 @@
 /**
  * Pure email heuristics used by the anti-fraud scorer.
- * No DB — unit-tested independently of `assessSignupFraud`.
+ * No DB - unit-tested independently of `assessSignupFraud`.
  */
 
 /** Score threshold above which an entry is flagged for review. */

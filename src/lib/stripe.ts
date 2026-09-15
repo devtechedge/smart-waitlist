@@ -6,7 +6,7 @@ import { publicEnv } from "@/lib/public-env";
 /**
  * Stripe Server Client
  * --------------------
- * Lazy singleton — only initialized when first accessed. Gracefully returns
+ * Lazy singleton - only initialized when first accessed. Gracefully returns
  * null if `STRIPE_SECRET_KEY` is not set, so the app works in preview mode.
  *
  * To enable payments:
@@ -35,7 +35,7 @@ export function getStripe(): Stripe | null {
   return cachedClient;
 }
 
-/** Price IDs for each tier — set these in your Stripe Dashboard + env vars. */
+/** Price IDs for each tier - set these in your Stripe Dashboard + env vars. */
 export const TIER_PRICES = {
   pro: () => process.env.STRIPE_PRO_PRICE_ID ?? "",
   founder: () => process.env.STRIPE_FOUNDER_PRICE_ID ?? "",
@@ -52,7 +52,7 @@ export type CheckoutMetadata = {
  * Create a Stripe Checkout Session for a tier upgrade.
  * Returns the URL to redirect the user to.
  *
- * Returns null if Stripe isn't configured — callers should fall back to the
+ * Returns null if Stripe isn't configured - callers should fall back to the
  * demo `upgradeTierAction` (instant free upgrade).
  */
 export async function createCheckoutSession(params: {

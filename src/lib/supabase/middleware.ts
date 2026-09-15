@@ -9,7 +9,7 @@ import { publicEnv } from "@/lib/public-env";
  *
  * What this does:
  *   1. Builds a Supabase client backed by the request's cookies.
- *   2. Calls `getUser()` — `@supabase/ssr` will, in the process, refresh the
+ *   2. Calls `getUser()` - `@supabase/ssr` will, in the process, refresh the
  *      access token if it has expired and set the refreshed cookies on the
  *      outgoing response.
  *   3. If the user is missing AND the path is auth-gated, redirect to `/`
@@ -19,7 +19,7 @@ import { publicEnv } from "@/lib/public-env";
  * Why we DON'T check admin status here:
  *   Admin status is determined by the `ADMIN_EMAILS` env var, which is
  *  server-only (not available to middleware via `process.env` in some
- *  deployment configurations — and even when it is, a DB call would be
+ *  deployment configurations - and even when it is, a DB call would be
  *  needed for an authoritative check). Admin gating is therefore enforced
  *  inside the admin Server Components / Server Actions via `requireAdmin()`.
  *

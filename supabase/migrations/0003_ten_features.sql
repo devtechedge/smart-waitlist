@@ -1,5 +1,5 @@
 -- ============================================================================
--- Smart Waitlist — Migration 0003: 10 Complex Features (v5)
+-- Smart Waitlist - Migration 0003: 10 Complex Features (v5)
 -- ============================================================================
 -- Adds tables/columns for:
 --   1. Launch countdown config (settings table)
@@ -9,7 +9,7 @@
 --   5. Webhook integrations (Slack/Discord)
 --   6. Signup geography (country/city on waitlist_entries)
 --
--- Safe to run on an existing database — all additive + idempotent policies.
+-- Safe to run on an existing database - all additive + idempotent policies.
 -- ============================================================================
 
 -- 1. Add geography columns to waitlist_entries -------------------------------
@@ -66,11 +66,11 @@ create table if not exists public.milestones (
 insert into public.milestones (threshold, title, description, perk, badge_icon)
 values
   (1,  'First Referral',     'You got your first referral!', 'bronze-badge', 'Sprout'),
-  (5,  'Getting Social',     '5 referrals — you are building momentum!', 'silver-badge', 'Users'),
-  (10, 'Connector',          '10 referrals — you are a connector!', 'gold-badge', 'Network'),
-  (25, 'Influencer',         '25 referrals — influencer status unlocked!', 'platinum-badge', 'Sparkles'),
-  (50, 'Viral Sensation',    '50 referrals — you are going viral!', 'diamond-badge', 'TrendingUp'),
-  (100,'Legend',             '100 referrals — legendary status!', 'founder-badge', 'Crown')
+  (5,  'Getting Social',     '5 referrals - you are building momentum!', 'silver-badge', 'Users'),
+  (10, 'Connector',          '10 referrals - you are a connector!', 'gold-badge', 'Network'),
+  (25, 'Influencer',         '25 referrals - influencer status unlocked!', 'platinum-badge', 'Sparkles'),
+  (50, 'Viral Sensation',    '50 referrals - you are going viral!', 'diamond-badge', 'TrendingUp'),
+  (100,'Legend',             '100 referrals - legendary status!', 'founder-badge', 'Crown')
 on conflict (threshold) do nothing;
 
 -- Track which milestones each user has unlocked

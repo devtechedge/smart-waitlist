@@ -7,7 +7,7 @@ import { Users, ArrowUp, Zap } from "lucide-react";
 /**
  * Hero3DVisual
  * ------------
- * A 3D animated visual for the hero section — a floating glassmorphic
+ * A 3D animated visual for the hero section - a floating glassmorphic
  * "ticket" card showing a live queue position, with orbiting referral
  * icons. Uses CSS 3D transforms + framer-motion for smooth animation.
  *

@@ -54,7 +54,7 @@ export async function createSupabaseServerClient() {
   );
 }
 
-/** The Supabase server client type — exported for convenience typing. */
+/** The Supabase server client type - exported for convenience typing. */
 export type SupabaseServerClient = Awaited<
   ReturnType<typeof createSupabaseServerClient>
 >;

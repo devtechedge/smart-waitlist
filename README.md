@@ -29,12 +29,12 @@ Production-ready SaaS waitlist with viral referral loops, live position tracking
 
 ## Features
 
-- **Viral referral engine** — unique referral codes, position leapfrogging, live leaderboard
-- **Real-time position tracking** — dashboard shows rank, referrals, and shareable link
-- **Admin analytics** — waitlist table, conversion funnel, geo heatmap, CSV export
-- **Stripe tiers** — paid upgrades and promo codes
-- **Secure by default** — Supabase RLS, Zod validation, admin allow-list, webhook signatures. See [SECURITY.md](SECURITY.md).
-- **Modern stack** — Next.js 16 App Router + Server Actions, Drizzle ORM, Tailwind v4 + shadcn/ui, strict TypeScript
+- **Viral referral engine** - unique referral codes, position leapfrogging, live leaderboard
+- **Real-time position tracking** - dashboard shows rank, referrals, and shareable link
+- **Admin analytics** - waitlist table, conversion funnel, geo heatmap, CSV export
+- **Stripe tiers** - paid upgrades and promo codes
+- **Secure by default** - Supabase RLS, Zod validation, admin allow-list, webhook signatures. See [SECURITY.md](SECURITY.md).
+- **Modern stack** - Next.js 16 App Router + Server Actions, Drizzle ORM, Tailwind v4 + shadcn/ui, strict TypeScript
 
 ## Tech Stack
 

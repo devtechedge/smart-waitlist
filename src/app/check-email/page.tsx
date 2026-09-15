@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// This page has no dynamic data — but keep it fresh so the meta is current.
+// This page has no dynamic data - but keep it fresh so the meta is current.
 export const revalidate = 0;
 
 export default function CheckEmailPage() {
@@ -39,7 +39,7 @@ export default function CheckEmailPage() {
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             Didn&apos;t get the email? Check your spam folder, or wait a
-            couple of minutes — sometimes there&apos;s a small delay.
+            couple of minutes - sometimes there&apos;s a small delay.
           </p>
           <p>
             Once you confirm, you&apos;ll be redirected back to your

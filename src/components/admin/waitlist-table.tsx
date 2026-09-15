@@ -45,7 +45,7 @@ export function WaitlistTable({ entries, className }: WaitlistTableProps) {
         <CardTitle className="text-xl">All waitlist entries</CardTitle>
         <CardDescription>
           {entries.length === 0
-            ? "No entries yet — the waitlist is empty."
+            ? "No entries yet - the waitlist is empty."
             : `Showing ${entries.length.toLocaleString()} ${entries.length === 1 ? "entry" : "entries"}, ranked by referrals.`}
         </CardDescription>
       </CardHeader>

@@ -52,7 +52,7 @@ export function Leaderboard({ entries, className }: LeaderboardProps) {
       <CardContent>
         {entries.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            No referrals yet — be the first to share your link!
+            No referrals yet - be the first to share your link!
           </p>
         ) : (
           <ol className="space-y-1">

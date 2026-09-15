@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// Auth-gated page — never cache, never prerender.
+// Auth-gated page - never cache, never prerender.
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
     redirect("/?redirect=/dashboard");
   }
 
-  // Claim-or-create the waitlist entry for this user. Idempotent — safe to
+  // Claim-or-create the waitlist entry for this user. Idempotent - safe to
   // call on every dashboard visit.
   const result = await getOrClaimMyWaitlistEntryAction();
 
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
 
   // Build the leaderboard payload from the dashboard query (top 10).
   // We re-fetch via the dashboard query so the leaderboard reflects the
-  // latest ranking — `getOrClaimMyWaitlistEntryAction` only returns the
+  // latest ranking - `getOrClaimMyWaitlistEntryAction` only returns the
   // current user's entry.
   const { getDashboardData } = await import("@/lib/queries/waitlist");
   const dashboardData = await getDashboardData();

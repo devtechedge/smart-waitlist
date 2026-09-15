@@ -71,7 +71,7 @@ export function HowItWorks() {
 /**
  * StatsBar
  * --------
- * Animated stats bar — counters animate up when scrolled into view.
+ * Animated stats bar - counters animate up when scrolled into view.
  */
 export function StatsBar({ totalUsers }: { totalUsers: number | null }) {
   const stats = [

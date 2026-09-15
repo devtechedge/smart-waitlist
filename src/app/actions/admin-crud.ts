@@ -313,7 +313,7 @@ export async function changeTierAction(
 }
 
 // ============================================================================
-// Delete entry (soft delete — ban + clear PII)
+// Delete entry (soft delete - ban + clear PII)
 // ============================================================================
 
 export async function deleteUserAction(entryId: string): Promise<AdminCrudState> {

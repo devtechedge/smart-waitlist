@@ -50,7 +50,7 @@ export function LaunchCountdown({ launchDate, className }: LaunchCountdownProps)
         <Rocket className="size-8 text-green-400" />
         <div>
           <div className="text-lg font-bold gradient-text">We&apos;re live!</div>
-          <div className="text-xs text-muted-foreground">The wait is over — access is open.</div>
+          <div className="text-xs text-muted-foreground">The wait is over - access is open.</div>
         </div>
       </motion.div>
     );

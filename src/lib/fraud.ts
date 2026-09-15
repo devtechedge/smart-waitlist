@@ -15,15 +15,15 @@ export { FLAG_THRESHOLD, isTempEmail, normalizeEmail } from "@/lib/fraud-email";
  * ---------------------------
  * Detects and scores suspicious signups using multiple signals:
  *
- *   1. IP-based detection      — multiple signups from the same IP
- *   2. Email pattern detection — plus-addressing (user+test1, user+test2)
- *   3. Velocity detection      — rapid signups from same IP or fingerprint
- *   4. Referral velocity       — a single referrer getting too many signups
+ *   1. IP-based detection      - multiple signups from the same IP
+ *   2. Email pattern detection - plus-addressing (user+test1, user+test2)
+ *   3. Velocity detection      - rapid signups from same IP or fingerprint
+ *   4. Referral velocity       - a single referrer getting too many signups
  *
  * Each signup gets a fraud score 0-100. Scores >= 70 are flagged for review.
  * Flagged entries don't get referral rewards until an admin approves them.
  *
- * The detection is heuristic (not ML) — designed to be transparent and
+ * The detection is heuristic (not ML) - designed to be transparent and
  * auditable. Each signal contributes a fixed number of points.
  */
 
@@ -46,12 +46,12 @@ export type FraudAssessment = {
  * Calculate a fraud score for a new signup.
  *
  * Signals (each adds points):
- *   +40  — temp email domain
- *   +30  — same IP has >= 3 signups in last hour
- *   +25  — same fingerprint has >= 2 signups in last hour
- *   +20  — email pattern match (plus-addressing of an existing user)
- *   +15  — referrer has >= 10 referrals in last hour (referral farming)
- *   +10  — no fingerprint provided (headless browser?)
+ *   +40  - temp email domain
+ *   +30  - same IP has >= 3 signups in last hour
+ *   +25  - same fingerprint has >= 2 signups in last hour
+ *   +20  - email pattern match (plus-addressing of an existing user)
+ *   +15  - referrer has >= 10 referrals in last hour (referral farming)
+ *   +10  - no fingerprint provided (headless browser?)
  *
  * Max possible: 140, capped at 100.
  */

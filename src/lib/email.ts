@@ -6,7 +6,7 @@ import { publicEnv } from "@/lib/public-env";
 /**
  * Email service (Resend)
  * ----------------------
- * Sends transactional emails via Resend. Gracefully degrades — if
+ * Sends transactional emails via Resend. Gracefully degrades - if
  * `RESEND_API_KEY` is not set, all send functions log + return success
  * without actually sending.
  *
@@ -46,7 +46,7 @@ export async function sendReferralNotification(
 ): Promise<void> {
   const client = getEmailClient();
   if (!client) {
-    console.log("[email] RESEND_API_KEY not set — skipping referral notification");
+    console.log("[email] RESEND_API_KEY not set - skipping referral notification");
     return;
   }
 
@@ -93,7 +93,7 @@ function renderReferralEmail(opts: {
           <p style="margin:0 0 16px;color:#3f3f46;font-size:16px;line-height:1.6;">Hi ${escapeHtml(referrerName)},</p>
           <p style="margin:0 0 16px;color:#3f3f46;font-size:16px;line-height:1.6;">
             <strong>${escapeHtml(newUserName)}</strong> just joined the waitlist using your referral link.
-            You now have <strong>${referralCount}</strong> ${plural} joined — and you've moved up the queue!
+            You now have <strong>${referralCount}</strong> ${plural} joined - and you've moved up the queue!
           </p>
           <p style="margin:0 0 24px;color:#3f3f46;font-size:16px;line-height:1.6;">Keep sharing your link to climb higher.</p>
           <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
@@ -118,7 +118,7 @@ export type InviteEmailParams = {
 export async function sendInviteEmail(params: InviteEmailParams): Promise<void> {
   const client = getEmailClient();
   if (!client) {
-    console.log("[email] RESEND_API_KEY not set — skipping invite email");
+    console.log("[email] RESEND_API_KEY not set - skipping invite email");
     return;
   }
 
@@ -136,7 +136,7 @@ export async function sendInviteEmail(params: InviteEmailParams): Promise<void> 
         <tr><td style="padding:40px;">
           <h2 style="margin:0 0 16px;color:#0a0a0a;font-size:24px;">🎊 You're in!</h2>
           <p style="margin:0 0 16px;color:#3f3f46;font-size:16px;line-height:1.6;">
-            Great news — you've been invited to claim your spot! Head to your dashboard to get started.
+            Great news - you've been invited to claim your spot! Head to your dashboard to get started.
           </p>
           <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
             <a href="${escapeHtml(appUrl)}/dashboard" style="display:inline-block;background:#0a0a0a;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">Claim your spot</a>

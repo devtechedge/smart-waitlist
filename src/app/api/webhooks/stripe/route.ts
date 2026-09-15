@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Stripe not configured" }, { status: 501 });
   }
 
-  // Get the raw body as text — Stripe needs the exact bytes.
+  // Get the raw body as text - Stripe needs the exact bytes.
   const payload = await request.text();
   const signature = request.headers.get("stripe-signature");
 
@@ -58,12 +58,12 @@ export async function POST(request: NextRequest) {
         break;
       }
       default:
-        // Unhandled event type — log but don't error.
+        // Unhandled event type - log but don't error.
         console.log(`[stripe webhook] unhandled event: ${event.type}`);
     }
   } catch (err) {
     console.error("[stripe webhook] handler error", err);
-    // Return 200 anyway so Stripe doesn't retry endlessly — we've logged the error.
+    // Return 200 anyway so Stripe doesn't retry endlessly - we've logged the error.
     // In production you'd want to queue failed events for retry.
   }
 
@@ -118,7 +118,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
     targetEmail: entry.email,
     oldValue: entry.tier,
     newValue: metadata.tier,
-    note: `Payment ${session.id} — ${metadata.tier} tier`,
+    note: `Payment ${session.id} - ${metadata.tier} tier`,
   });
 
   console.log(`[stripe webhook] upgraded ${entry.email} to ${metadata.tier}`);

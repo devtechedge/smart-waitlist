@@ -11,7 +11,7 @@ import { getServerEnv } from "@/lib/server-env";
  * Row-Level Security entirely. Use this ONLY in trusted server contexts
  * (admin Server Actions, admin Route Handlers, background jobs).
  *
- * NEVER expose the service-role key to the browser — it can read/modify any
+ * NEVER expose the service-role key to the browser - it can read/modify any
  * row in your database, ignoring all RLS policies.
  *
  * This module is guarded by `"server-only"` so that any accidental import
@@ -46,5 +46,5 @@ export function createSupabaseAdminClient(): ReturnType<typeof createClient> {
   return cachedAdmin;
 }
 
-/** The Supabase admin client type — exported for convenience typing. */
+/** The Supabase admin client type - exported for convenience typing. */
 export type SupabaseAdminClient = ReturnType<typeof createClient>;

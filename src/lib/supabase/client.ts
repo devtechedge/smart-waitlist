@@ -15,7 +15,7 @@ import { publicEnv } from "@/lib/public-env";
  *   await supabase.auth.signOut();
  *
  * NOTE: There is intentionally no `"use client"` directive at the top of this
- * file — it's a factory function that returns a client. The client itself is
+ * file - it's a factory function that returns a client. The client itself is
  * only constructed when called from client code. This lets server code import
  * the factory for type-inference purposes without dragging the browser bundle.
  */
@@ -26,5 +26,5 @@ export function createSupabaseBrowserClient() {
   );
 }
 
-/** The Supabase browser client type — exported for convenience typing. */
+/** The Supabase browser client type - exported for convenience typing. */
 export type SupabaseBrowserClient = ReturnType<typeof createBrowserClient>;

@@ -1,12 +1,12 @@
 import { updateSession } from "@/lib/supabase/middleware";
 
 /**
- * Next.js Middleware — Supabase Auth Session Refresh + Route Guard
+ * Next.js Middleware - Supabase Auth Session Refresh + Route Guard
  * ----------------------------------------------------------------
  * Runs on every matched request (see `matcher` below). Delegates to
  * `updateSession()` which:
  *   1. Constructs a Supabase client backed by the request cookies.
- *   2. Calls `getUser()` — this triggers a token refresh if the access
+ *   2. Calls `getUser()` - this triggers a token refresh if the access
  *      token has expired, and sets the refreshed cookies on the response.
  *   3. Redirects unauthenticated users away from protected routes
  *      (`/dashboard`, `/admin`, `/account`) to `/?redirect=<original-path>`.
@@ -21,7 +21,7 @@ import { updateSession } from "@/lib/supabase/middleware";
  *   - The middleware runs on Vercel's Edge Runtime by default, which is
  *     globally distributed and fast.
  *
- * Admin authorization is NOT checked here — it requires the `ADMIN_EMAILS`
+ * Admin authorization is NOT checked here - it requires the `ADMIN_EMAILS`
  * env var (server-only) and is enforced inside the `/admin` page + query
  * layer via `requireAdmin()`. This keeps middleware fast and stateless.
  *
@@ -33,9 +33,9 @@ export async function middleware(request: Parameters<typeof updateSession>[0]) {
 }
 
 /**
- * Matcher — controls which paths middleware runs on.
+ * Matcher - controls which paths middleware runs on.
  *
- * MUST be a static literal (Next.js parses this at build time — it cannot
+ * MUST be a static literal (Next.js parses this at build time - it cannot
  * reference imported variables). Kept in sync with `middlewareMatcher` in
  * `src/lib/supabase/middleware.ts`.
  *
@@ -44,7 +44,7 @@ export async function middleware(request: Parameters<typeof updateSession>[0]) {
  *   - `_next/image`         : image optimization endpoint
  *   - `favicon.ico`         : favicon
  *   - `*.<ext>`             : any file with a literal extension (robots.txt,
- *                             .svg, .png, etc.) — avoids bouncing static
+ *                             .svg, .png, etc.) - avoids bouncing static
  *                             assets through the auth check.
  */
 export const config = {

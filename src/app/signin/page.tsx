@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Sign in to check your waitlist position.",
 };
 
-// Auth-adjacent route — never cache, never prerender.
+// Auth-adjacent route - never cache, never prerender.
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 

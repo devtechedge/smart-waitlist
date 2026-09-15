@@ -11,7 +11,7 @@ import { publicAppOrigin } from "@/lib/public-env";
  * Pure read functions intended for Server Components. Mutations live in
  * `src/app/actions/waitlist.ts` and are explicitly marked `"use server"`.
  *
- * Position ranking rule (single source of truth — keep in sync with
+ * Position ranking rule (single source of truth - keep in sync with
  * `computeAdminEntries` in `src/lib/queries/admin.ts`):
  *
  *   ORDER BY referral_count DESC, created_at ASC
@@ -92,7 +92,7 @@ export async function getTotalWaitlistCount(): Promise<number> {
   return result?.total ?? 0;
 }
 
-/** Shape returned by `getDashboardData` — the full payload needed by `/dashboard`. */
+/** Shape returned by `getDashboardData` - the full payload needed by `/dashboard`. */
 export type DashboardData = {
   entry: WaitlistEntry;
   position: number;
@@ -110,7 +110,7 @@ export type DashboardData = {
  * Fetch the current user's waitlist entry + position + leaderboard.
  *
  * Returns `null` if the user is unauthenticated or has no entry yet
- * (the dashboard will then prompt them to claim their spot — see
+ * (the dashboard will then prompt them to claim their spot - see
  * `claimOrCreateWaitlistEntryAction` in `src/app/actions/waitlist.ts`).
  */
 export async function getDashboardData(): Promise<DashboardData | null> {
@@ -130,7 +130,7 @@ export async function getDashboardData(): Promise<DashboardData | null> {
     getTotalWaitlistCount(),
   ]);
 
-  // Top 10 leaderboard — same ranking rule.
+  // Top 10 leaderboard - same ranking rule.
   const leaderboardRows = await db
     .select({
       referralCount: schema.waitlistEntries.referralCount,

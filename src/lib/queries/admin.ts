@@ -18,7 +18,7 @@ import { isAdminEmail } from "@/lib/server-env";
  *   position = ROW_NUMBER() OVER (that ordering)
  *
  * We compute position client-side as `index + 1` to avoid a second query
- * — the ORDER BY already establishes the ranking.
+ * - the ORDER BY already establishes the ranking.
  */
 
 /** Row shape for the admin dashboard table. */
@@ -114,7 +114,7 @@ export async function getAdminStats(): Promise<AdminStats> {
  * rule. Intended for the admin table.
  *
  * @param limit  Maximum rows to return (default 1000). Pagination is via
- *               `offset` — for >10k rows, switch to cursor-based pagination.
+ *               `offset` - for >10k rows, switch to cursor-based pagination.
  * @param offset Number of rows to skip.
  */
 export async function getAdminEntries(

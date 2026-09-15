@@ -62,7 +62,7 @@ const refCodeSchema = z
 /**
  * Resolve a referral code to the referrer's entry, returning the entry ID.
  * Returns `null` if the code doesn't exist (we silently drop the attribution
- * rather than failing the signup — a bad ref code shouldn't block onboarding).
+ * rather than failing the signup - a bad ref code shouldn't block onboarding).
  */
 async function resolveReferrer(
   refCode: string,
@@ -96,7 +96,7 @@ async function resolveReferrer(
  *          unique email constraint, but we guard against it).
  *   4. If not found:
  *        - Read `ref_code` from Supabase user_metadata (set at signup).
- *        - Resolve referrer (if any) — silently skip if invalid.
+ *        - Resolve referrer (if any) - silently skip if invalid.
  *        - Insert new entry inside a transaction; atomically increment the
  *          referrer's `referral_count`.
  *
@@ -156,7 +156,7 @@ export async function claimOrCreateWaitlistEntryAction(): Promise<
       return finalize(updated, false, false);
     }
 
-    // Already fully claimed — no-op.
+    // Already fully claimed - no-op.
     return finalize(existing, false, false);
   }
 
@@ -285,7 +285,7 @@ async function generateUniqueReferralCode(): Promise<string> {
     if (!conflict) return code;
   }
 
-  // Vanishingly unlikely — 5 random 6-char base36 codes all collide.
+  // Vanishingly unlikely - 5 random 6-char base36 codes all collide.
   throw new Error("Failed to generate a unique referral code after 5 attempts.");
 }
 
@@ -293,7 +293,7 @@ async function generateUniqueReferralCode(): Promise<string> {
  * Track a referral-link visit. Called from the landing page Server Component
  * when `?ref=CODE` is present. Increments the referrer's `visits` counter.
  *
- * This is for analytics only — it does NOT affect position. Position is
+ * This is for analytics only - it does NOT affect position. Position is
  * determined solely by `referral_count` (incremented when a referred user
  * actually signs up).
  *
@@ -306,7 +306,7 @@ export async function trackReferralVisitAction(
 ): Promise<WaitlistActionState> {
   const parsed = refCodeSchema.safeParse(refCode);
   if (!parsed.success) {
-    // Don't error — just don't count the visit. Landing page should still render.
+    // Don't error - just don't count the visit. Landing page should still render.
     return { ok: true };
   }
 
@@ -321,7 +321,7 @@ export async function trackReferralVisitAction(
       .returning({ id: schema.waitlistEntries.id });
 
     if (result.length === 0) {
-      // Unknown code — silently no-op.
+      // Unknown code - silently no-op.
       return { ok: true };
     }
 
@@ -339,7 +339,7 @@ export async function trackReferralVisitAction(
  * they don't have one yet. This is the one-call entry point the dashboard
  * Server Component uses.
  *
- * The return type is the same as `claimOrCreateWaitlistEntryAction` — kept
+ * The return type is the same as `claimOrCreateWaitlistEntryAction` - kept
  * as a separate export so the dashboard code reads clearly and so we can
  * later add caching/revalidation hints without touching the claim action.
  */
@@ -382,7 +382,7 @@ export async function updateReferralCodeAction(
 
   const newCode = parsed.data;
   if (RESERVED_CODES.has(newCode)) {
-    return { ok: false, error: "That code is reserved — please pick another." };
+    return { ok: false, error: "That code is reserved - please pick another." };
   }
 
   const user = await getCurrentUser();
@@ -403,7 +403,7 @@ export async function updateReferralCodeAction(
     .limit(1);
 
   if (conflict && conflict.id !== entry.id) {
-    return { ok: false, error: "That code is already taken — try another." };
+    return { ok: false, error: "That code is already taken - try another." };
   }
 
   await db
@@ -415,7 +415,7 @@ export async function updateReferralCodeAction(
 }
 
 // ============================================================================
-// Tier upgrade (demo mode — instant, no payment)
+// Tier upgrade (demo mode - instant, no payment)
 // ============================================================================
 
 export type TierUpgradeState = {

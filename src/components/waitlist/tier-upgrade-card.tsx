@@ -56,7 +56,7 @@ export function TierUpgradeCard({ currentTier, className }: TierUpgradeCardProps
         });
 
         if (res.status === 501) {
-          // Stripe not configured — fall back to demo instant upgrade
+          // Stripe not configured - fall back to demo instant upgrade
           const { upgradeTierAction } = await import("@/app/actions/waitlist");
           const result = await upgradeTierAction(tier);
           if (!result.ok) {

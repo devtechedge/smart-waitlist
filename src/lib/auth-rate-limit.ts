@@ -1,6 +1,6 @@
 /**
  * Best-effort in-memory rate limit for auth Server Actions.
- * Resets per serverless isolate — not a global WAF. Good enough to slow
+ * Resets per serverless isolate - not a global WAF. Good enough to slow
  * credential stuffing on the Vercel Hobby demo.
  */
 type Bucket = { count: number; resetAt: number };

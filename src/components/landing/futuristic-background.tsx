@@ -13,13 +13,13 @@ import { motion } from "motion/react";
  *   4. Scan line (sci-fi vibe)
  *   5. Vignette (focus to center)
  *
- * Pure CSS/SVG — no images, no WebGL. Performant on mobile.
+ * Pure CSS/SVG - no images, no WebGL. Performant on mobile.
  * Fixed position, z-index -10, pointer-events none.
  */
 export function FuturisticBackground() {
   // Generate stable random particles once on mount.
   // Using useState with a lazy initializer (not useMemo) because Math.random
-  // is impure — React 19's react-hooks/purity rule flags it in useMemo.
+  // is impure - React 19's react-hooks/purity rule flags it in useMemo.
   const [particles] = React.useState(() =>
     Array.from({ length: 30 }, (_, i) => ({
       id: i,

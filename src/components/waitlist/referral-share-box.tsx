@@ -22,7 +22,7 @@ import {
  * one-click copy button + social share buttons (Twitter/X, LinkedIn, native
  * Web Share API on mobile).
  *
- * The link is computed server-side and passed in as a prop — this component
+ * The link is computed server-side and passed in as a prop - this component
  * is purely presentational + clipboard/share.
  *
  * Props:
@@ -54,29 +54,29 @@ export function ReferralShareBox({
       // Reset the icon after 2s.
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy — long-press the link to copy manually.");
+      toast.error("Couldn't copy - long-press the link to copy manually.");
     }
   }, [referralLink]);
 
   const handleNativeShare = React.useCallback(async () => {
     if (typeof navigator === "undefined" || !navigator.share) {
-      toast.message("Native share isn't available — use the copy button instead.");
+      toast.message("Native share isn't available - use the copy button instead.");
       return;
     }
     try {
       await navigator.share({
         title: "Join me on the waitlist",
-        text: "I'm on the waitlist — use my link to skip the line:",
+        text: "I'm on the waitlist - use my link to skip the line:",
         url: referralLink,
       });
     } catch {
-      // User cancelled — no toast needed.
+      // User cancelled - no toast needed.
     }
   }, [referralLink]);
 
   const tweetUrl = React.useMemo(() => {
     const text = encodeURIComponent(
-      "Just joined the waitlist — use my link to skip the line and get early access 👇",
+      "Just joined the waitlist - use my link to skip the line and get early access 👇",
     );
     const url = encodeURIComponent(referralLink);
     return `https://twitter.com/intent/tweet?text=${text}&url=${url}`;

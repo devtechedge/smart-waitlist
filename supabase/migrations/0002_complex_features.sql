@@ -1,5 +1,5 @@
 -- ============================================================================
--- Smart Waitlist — Migration 0002: Complex Features (v3)
+-- Smart Waitlist - Migration 0002: Complex Features (v3)
 -- ============================================================================
 -- Adds columns + tables for:
 --   1. Anti-Fraud system (signup_ip, fingerprint, fraud_score, flagged)
@@ -7,7 +7,7 @@
 --   3. Stripe Payments (stripe_customer_id, stripe_subscription_id)
 --   4. Admin audit log (new table)
 --
--- Safe to run on an existing database — all changes are additive.
+-- Safe to run on an existing database - all changes are additive.
 -- Run this AFTER 0000_initial.sql AND 0001_tier_system.sql.
 -- ============================================================================
 
@@ -65,7 +65,7 @@ create index if not exists admin_audit_log_target_entry_idx
 create index if not exists admin_audit_log_created_at_idx
   on public.admin_audit_log (created_at);
 
--- Enable RLS on audit log — only admins (service-role) can read/write.
+-- Enable RLS on audit log - only admins (service-role) can read/write.
 alter table public.admin_audit_log enable row level security;
 
 -- No policies = no access via anon/authenticated keys.

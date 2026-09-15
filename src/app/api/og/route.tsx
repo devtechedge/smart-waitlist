@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
           }}
         >
           <span style={{ color: "#71717a", fontSize: "18px" }}>
-            Join the waitlist — skip the line with their link
+            Join the waitlist - skip the line with their link
           </span>
           <span style={{ color: "#fff", fontSize: "18px", fontWeight: 600 }}>
             /u/{profile.referralCode}

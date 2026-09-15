@@ -1,4 +1,4 @@
-# Security Assessment — Smart Waitlist & Referral Engine
+# Security Assessment - Smart Waitlist & Referral Engine
 
 **Date:** 2026-09-06  
 **Scope:** Auth, RLS, XSS, injection, Stripe webhooks, CORS, secrets, admin allow-list  
@@ -50,9 +50,9 @@
 
 ## 3. Injection / XSS
 
-**SQL** — Drizzle ORM; no string-concatenated SQL on the hot path.
+**SQL** - Drizzle ORM; no string-concatenated SQL on the hot path.
 
-**Referral codes** — `normalizeReferralCode` rejects anything that is not `[a-z0-9]{1,32}`.
+**Referral codes** - `normalizeReferralCode` rejects anything that is not `[a-z0-9]{1,32}`.
 
 **XSS**
 - Code search found `dangerouslySetInnerHTML` only in `src/components/ui/chart.tsx` (theme CSS, not waitlist content).

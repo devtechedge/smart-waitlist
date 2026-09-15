@@ -49,7 +49,7 @@ export function CustomReferralCodeEditor({ currentCode, hasCustomCode, className
           )}
         </CardTitle>
         <CardDescription className="text-xs">
-          {hasCustomCode ? "Your custom code — share it far and wide." : "Make your link memorable with a custom code."}
+          {hasCustomCode ? "Your custom code - share it far and wide." : "Make your link memorable with a custom code."}
         </CardDescription>
       </CardHeader>
       <CardContent>

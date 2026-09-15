@@ -13,7 +13,7 @@ import { z } from "zod";
  * cause the build to fail when env vars aren't present in the build
  * environment. Lazy validation defers the check to actual runtime use.
  *
- * This module must NOT import `"server-only"` — it is imported by both client
+ * This module must NOT import `"server-only"` - it is imported by both client
  * and server code. Server-only env vars live in `src/lib/server-env.ts`.
  */
 
@@ -81,7 +81,7 @@ function getPublicEnv(): PublicEnv {
 }
 
 /**
- * Lazy proxy — accessing `publicEnv.NEXT_PUBLIC_SUPABASE_URL` triggers
+ * Lazy proxy - accessing `publicEnv.NEXT_PUBLIC_SUPABASE_URL` triggers
  * validation on first access, then caches the result. This lets the module
  * be imported at build time without failing.
  */

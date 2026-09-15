@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
  * ----------
  * A simplified "heatmap" showing top countries/cities by signup count.
  * Uses horizontal bars with intensity-based coloring (no world map SVG
- * to keep the bundle small — a full map can be added with react-simple-maps
+ * to keep the bundle small - a full map can be added with react-simple-maps
  * if needed).
  *
  * Props:
@@ -60,7 +60,7 @@ export function GeoHeatmap({ data, className }: GeoHeatmapProps) {
       <CardContent>
         {countryData.length === 0 ? (
           <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
-            No geo data yet — signups will appear here.
+            No geo data yet - signups will appear here.
           </div>
         ) : (
           <div className="space-y-2">

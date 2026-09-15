@@ -7,10 +7,10 @@ import { db, schema } from "@/db";
  * Public leaderboard queries
  * --------------------------
  * Data for the public `/leaderboard` page and user profile cards (`/u/[code]`).
- * These queries do NOT require auth — they only return non-sensitive fields.
+ * These queries do NOT require auth - they only return non-sensitive fields.
  *
  * Privacy rules:
- *   - Emails are NEVER exposed — only fullName or masked email
+ *   - Emails are NEVER exposed - only fullName or masked email
  *   - Banned users are excluded
  *   - Users can "opt out" of the public leaderboard (future: add `public` column)
  */
@@ -128,7 +128,7 @@ export async function getPublicProfile(
 }
 
 /**
- * Achievement system — returns badge names based on milestones.
+ * Achievement system - returns badge names based on milestones.
  */
 function getAchievements(referralCount: number, tier: string): string[] {
   const achievements: string[] = [];

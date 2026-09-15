@@ -27,7 +27,7 @@ type WebhookPayload = {
 };
 
 /**
- * Fire webhooks for a given event. Fire-and-forget (no await) — webhook
+ * Fire webhooks for a given event. Fire-and-forget (no await) - webhook
  * failures should never block the main flow.
  */
 export function fireWebhooks(event: WebhookEvent, payload: Omit<WebhookPayload, "event">): void {

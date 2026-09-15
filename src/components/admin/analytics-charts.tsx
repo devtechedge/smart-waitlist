@@ -135,7 +135,7 @@ export function AnalyticsCharts({ data, className }: AnalyticsChartsProps) {
 function EmptyChart() {
   return (
     <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
-      No data yet — charts will populate as users sign up.
+      No data yet - charts will populate as users sign up.
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { eq } from "drizzle-orm";
  * Creates a Stripe Customer Portal session so users can manage their
  * subscription (update card, cancel, view invoices).
  *
- * Returns: { url: string } — redirect the browser to this URL
+ * Returns: { url: string } - redirect the browser to this URL
  */
 
 export const dynamic = "force-dynamic";

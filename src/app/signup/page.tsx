@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Create your account and claim your spot in line.",
 };
 
-// Auth-gated adjacent route — never cache, never prerender.
+// Auth-gated adjacent route - never cache, never prerender.
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
@@ -46,7 +46,7 @@ export default async function SignUpPage({
 
       <p className="mt-6 max-w-md text-center text-xs text-muted-foreground">
         By signing up, you agree to receive product updates. We&apos;ll never
-        spam you — unsubscribe anytime. Read our{" "}
+        spam you - unsubscribe anytime. Read our{" "}
         <Link href="/" className="underline-offset-4 hover:underline">
           privacy policy
         </Link>

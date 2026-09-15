@@ -1,5 +1,5 @@
 /**
- * ADMIN_EMAILS parsing. Pure — does not read process.env.
+ * ADMIN_EMAILS parsing. Pure - does not read process.env.
  * `isAdminEmail` in server-env.ts wraps this after loading secrets.
  */
 

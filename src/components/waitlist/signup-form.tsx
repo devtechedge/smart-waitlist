@@ -48,7 +48,7 @@ export function SignupForm({
   redirectPath = "/dashboard",
   className,
 }: SignupFormProps) {
-  // `useActionState` (React 19) — formerly `useFormState`.
+  // `useActionState` (React 19) - formerly `useFormState`.
   // Initial state has `ok: true` so the button isn't disabled on first paint.
   const [state, formAction, isPending] = useActionState<
     ActionState,

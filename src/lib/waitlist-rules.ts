@@ -1,6 +1,6 @@
 /**
  * Pure waitlist ranking + referral-code helpers.
- * No I/O — safe to unit-test and share between queries, actions, and CI.
+ * No I/O - safe to unit-test and share between queries, actions, and CI.
  *
  * Ranking (single source of truth):
  *   ORDER BY referral_count DESC, created_at ASC

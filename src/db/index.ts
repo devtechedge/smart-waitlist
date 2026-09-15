@@ -38,9 +38,9 @@ function createPostgresClient(): PostgresClient {
   const { DATABASE_URL } = getServerEnv();
 
   return postgres(DATABASE_URL, {
-    // Disable prepared statements — required for Supabase's pooler.
+    // Disable prepared statements - required for Supabase's pooler.
     prepare: false,
-    // Small pool size — serverless functions share a process per instance.
+    // Small pool size - serverless functions share a process per instance.
     max: 10,
     idle_timeout: 20,
     connect_timeout: 10,
@@ -111,5 +111,5 @@ export type {
   NewAdminAuditLog,
 } from "./schema";
 
-/** The Drizzle DB type — useful for typing function parameters. */
+/** The Drizzle DB type - useful for typing function parameters. */
 export type Database = DrizzleDb;

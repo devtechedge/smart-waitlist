@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
  * Lower = better (closer to #1). The Y-axis is inverted so "up" = better.
  *
  * Props:
- *   - data: from `getPositionHistory()` — array of { position, referralCount, recordedAt }
+ *   - data: from `getPositionHistory()` - array of { position, referralCount, recordedAt }
  */
 export type PositionHistoryPoint = {
   position: number;
@@ -71,7 +71,7 @@ export function PositionHistoryChart({ data, className }: PositionHistoryChartPr
       <CardContent>
         {chartData.length < 2 ? (
           <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
-            Not enough data yet — your position history will appear here over time.
+            Not enough data yet - your position history will appear here over time.
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="h-[240px] w-full">

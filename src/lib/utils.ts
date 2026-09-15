@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /**
- * `cn` — className combiner
+ * `cn` - className combiner
  * -------------------------
  * Merges clsx (conditional class names) with tailwind-merge (resolves
  * conflicting Tailwind utility classes, keeping the last one wins).

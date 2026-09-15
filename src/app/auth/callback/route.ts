@@ -13,14 +13,14 @@ import { publicEnv } from "@/lib/public-env";
  *
  * We construct the Supabase client inline (rather than using
  * `createSupabaseServerClient`) because we need fine-grained control over
- * the cookie write in a Route Handler context — `@supabase/ssr`'s
+ * the cookie write in a Route Handler context - `@supabase/ssr`'s
  * `createServerClient` is the correct constructor here.
  *
  * Reference:
  *   https://supabase.com/docs/guides/auth/server-side/nextjs
  */
 
-// Always run dynamically — auth callbacks are per-user.
+// Always run dynamically - auth callbacks are per-user.
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
@@ -65,12 +65,12 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    // Exchange failed — send to sign-in with an error flag.
+    // Exchange failed - send to sign-in with an error flag.
     const redirectUrl = new URL("/signin?error=auth_callback_failed", requestUrl.origin);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Success — redirect to the dashboard (or `next`).
+  // Success - redirect to the dashboard (or `next`).
   const redirectUrl = new URL(next, requestUrl.origin);
   return NextResponse.redirect(redirectUrl);
 }
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
  * site-relative paths starting with "/". Prevents open-redirect attacks
  * via crafted `?next=https://evil.com` query params.
  *
- * Mirrors `safeRedirectPath` in `src/app/actions/auth.ts` — kept duplicated
+ * Mirrors `safeRedirectPath` in `src/app/actions/auth.ts` - kept duplicated
  * (not shared) so this route handler has zero non-Supabase dependencies
  * and can be audited in isolation.
  */

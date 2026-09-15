@@ -13,12 +13,12 @@ import { Badge } from "@/components/ui/badge";
  *
  * The banner is intentionally NOT dismissible on the server (no client
  * state). If you want a dismissible variant, wrap this in a client
- * component with a `useState` + `localStorage` flag — but for viral
+ * component with a `useState` + `localStorage` flag - but for viral
  * clarity we keep the banner persistent.
  *
  * Props:
  *   - `referrerName` : the referrer's display name (from `resolveReferralCode`).
- *                      `null` means the code was invalid/expired — render nothing.
+ *                      `null` means the code was invalid/expired - render nothing.
  *   - `className`    : optional extra classes.
  */
 export type ReferralBannerProps = {

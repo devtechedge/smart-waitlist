@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 /**
  * PositionCard
  * ------------
- * Server Component. The hero element of the `/dashboard` page — shows the
+ * Server Component. The hero element of the `/dashboard` page - shows the
  * user's current waitlist position prominently, plus three secondary stats:
  * total users, referral count, and time on waitlist.
  *
@@ -98,7 +98,7 @@ export function PositionCard({
         {isTop10 ? (
           <div className="flex items-center gap-2 rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
             <Trophy className="size-4" aria-hidden />
-            You&apos;re in the top 10 — keep sharing to stay ahead!
+            You&apos;re in the top 10 - keep sharing to stay ahead!
           </div>
         ) : null}
 

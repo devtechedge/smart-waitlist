@@ -1,5 +1,5 @@
 -- ============================================================================
--- Smart Waitlist & Referral Engine — Canonical Supabase Schema
+-- Smart Waitlist & Referral Engine - Canonical Supabase Schema
 -- ============================================================================
 -- This is the authoritative SQL schema. It mirrors the Drizzle ORM schema
 -- in `src/db/schema.ts` and adds the pieces Drizzle can't manage:
@@ -8,7 +8,7 @@
 --   - The `updated_at` trigger function
 --
 -- How to apply:
---   Option A (recommended): Run `npm run db:push` — Drizzle Kit pushes the
+--   Option A (recommended): Run `npm run db:push` - Drizzle Kit pushes the
 --   table/enum structure directly. Then run JUST the RLS + trigger blocks
 --   below (sections "Row Level Security" and "Triggers") via the Supabase
 --   SQL Editor.
@@ -59,7 +59,7 @@ create index if not exists profiles_is_admin_idx on public.profiles (is_admin);
 -- The core waitlist record. `user_id` is nullable so anonymous visitors can
 -- join by email and later "claim" their entry when they sign up.
 --
--- Position is NOT a column — it's computed dynamically using the ranking:
+-- Position is NOT a column - it's computed dynamically using the ranking:
 --   ORDER BY referral_count DESC, created_at ASC
 -- See `src/lib/queries/waitlist.ts → computePosition`.
 create table if not exists public.waitlist_entries (
@@ -143,7 +143,7 @@ create trigger on_auth_user_created
 -- ============================================================================
 -- Row Level Security
 -- ============================================================================
--- Enable RLS on both tables. By default, RLS DENIES all access — the
+-- Enable RLS on both tables. By default, RLS DENIES all access - the
 -- policies below open up only what's needed.
 --
 -- Admin operations (listing all entries, CSV export) use the service-role
@@ -174,7 +174,7 @@ create policy "Profiles are updatable by owner"
 -- 2. A user can SELECT only their own entry.
 -- 3. A user can UPDATE only their own entry (e.g. claim an anonymous entry
 --    by setting user_id after signup).
--- 4. No DELETE policy — deletions happen only via service-role (admin).
+-- 4. No DELETE policy - deletions happen only via service-role (admin).
 
 drop policy if exists "Anyone can insert a waitlist entry" on public.waitlist_entries;
 create policy "Anyone can insert a waitlist entry"

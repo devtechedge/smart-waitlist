@@ -10,7 +10,7 @@ import { escapeCsv } from "@/lib/csv";
  * if the caller isn't on the `ADMIN_EMAILS` allow-list).
  *
  * The CSV export returns a plain string so the client can trigger a
- * download via a Blob — keeping the binary file generation client-side
+ * download via a Blob - keeping the binary file generation client-side
  * avoids Server Action streaming limits and lets the browser handle the
  * download UI natively.
  */
@@ -28,7 +28,7 @@ export type CsvExport = {
   rowCount: number;
 };
 
-/** Server-side query — wraps `getAdminEntries` with admin enforcement. */
+/** Server-side query - wraps `getAdminEntries` with admin enforcement. */
 export async function listAllEntriesAction(
   limit = 1000,
   offset = 0,
@@ -44,7 +44,7 @@ export async function getAdminStatsAction() {
 
 /**
  * Export the full waitlist as CSV. Returns the CSV as a string so the
- * client can create a Blob and trigger a download — this avoids the
+ * client can create a Blob and trigger a download - this avoids the
  * Server Action body-size limit on Vercel and keeps the binary file
  * generation client-side.
  *
@@ -53,7 +53,7 @@ export async function getAdminStatsAction() {
  *
  * - Fields containing commas, quotes, or newlines are double-quoted.
  * - Embedded double quotes are escaped by doubling (`"` → `""`).
- * - Timestamps are ISO 8601 (UTC) — sortable and Excel-friendly.
+ * - Timestamps are ISO 8601 (UTC) - sortable and Excel-friendly.
  * - NULL fields are emitted as empty strings (not "null").
  */
 export async function exportWaitlistCsvAction(): Promise<

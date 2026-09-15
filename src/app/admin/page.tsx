@@ -22,11 +22,11 @@ import { isAdminEmail } from "@/lib/server-env";
 
 export const metadata: Metadata = {
   title: "Admin",
-  description: "Waitlist admin dashboard — view entries and export CSV.",
+  description: "Waitlist admin dashboard - view entries and export CSV.",
   robots: { index: false, follow: false },
 };
 
-// Admin page — never cache, never prerender (needs server env + DB at runtime).
+// Admin page - never cache, never prerender (needs server env + DB at runtime).
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
