@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles, Zap, Users, Trophy } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Hero3DVisual } from "@/components/landing/hero-3d-visual";
+import { LazyHero3DVisual } from "@/components/landing/lazy-decor";
 import { AnimatedCounter } from "@/components/landing/animated-counter";
 
 /**
@@ -116,7 +116,7 @@ export function FuturisticHero({ totalUsers, className, children }: FuturisticHe
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <Hero3DVisual />
+          <LazyHero3DVisual />
         </motion.div>
       </div>
     </section>

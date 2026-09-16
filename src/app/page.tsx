@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { FuturisticBackground } from "@/components/landing/futuristic-background";
+import { LazyFuturisticBackground } from "@/components/landing/lazy-decor";
 import { FuturisticHero, FeatureBullets, ArrowRight } from "@/components/landing/futuristic-hero";
 import { HowItWorks, StatsBar, FinalCTA, FuturisticFooter } from "@/components/landing/landing-sections";
 import { LaunchCountdown } from "@/components/landing/launch-countdown";
@@ -50,7 +50,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
   return (
     <>
-      <FuturisticBackground />
+      <LazyFuturisticBackground />
 
       {/* v5: Social proof feed (rotating signup toasts) */}
       <SocialProofFeed entries={recentSignups} />
