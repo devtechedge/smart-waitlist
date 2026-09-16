@@ -36,12 +36,14 @@ export const metadata: Metadata = {
     description:
       "Launch your product with a viral waitlist. Sign up, share your referral link, and climb the queue.",
     type: "website",
+    images: [{ url: 'https://smart-waitlist-engine.vercel.app/og.png', width: 1200, height: 630, alt: 'smart-waitlist' }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Smart Waitlist & Referral Engine",
     description:
       "Launch your product with a viral waitlist. Sign up, share your referral link, and climb the queue.",
+    images: ['https://smart-waitlist-engine.vercel.app/og.png'],
   },
 };
 
